@@ -10,7 +10,7 @@ from os import path
 from datetime import datetime
 import os, locale
 
-locale.setlocale(locale.LC_TIME, 'ro_RO')
+locale.setlocale(locale.LC_TIME, 'fr_FR')
 
 #init DB
 db = SQLAlchemy()
