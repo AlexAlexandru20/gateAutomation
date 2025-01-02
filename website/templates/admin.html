@@ -1,0 +1,536 @@
+{% extends 'base.html' %}
+{% block title %}
+    Dashboard
+{% endblock %}
+{% block content %}
+
+<div class="totals">
+    <div class="containerTop">
+        <div class="Totalscontainer" id="studentContainer">
+            <div class="contentLeft">
+                <div class="imgContainer">
+                    <img src="{{url_for('static', filename='images/svg_website/userLogo.svg')}}" alt="Img container">
+                </div>
+                <div class="colorContainer" id="studentsColor">
+                    <div class="liceuColor">
+                        <div class="hoverProc">{{procentaj_liceu}}%</div>
+                        <div class="colorText">{{procentaj_liceu}}%</div>
+                    </div>
+                    <div class="profColor">
+                        <div class="hoverProc">{{procentaj_prof}}%</div>
+                        <div class="colorText">{{procentaj_prof}}%</div>
+                    </div>
+                    <div class="otherColor">
+                        <div class="hoverProc">{{procentaj_other}}%</div>
+                    </div>
+                </div>
+            </div>
+            <div class="contentRight">
+                <div class="contentTitle">ELEVI</div>
+                <div class="classType">
+                    <div class="liceu">
+                        <div class="colorLiceu"></div>
+                        <div class="contentType">LICEU ({{procentaj_liceu}}%)</div>
+                    </div>
+                    <div class="prof">
+                        <div class="colorProf"></div>
+                        <div class="contentType">PROFESIONALĂ ({{procentaj_prof}}%)</div>
+                    </div>
+                </div>
+                <div class="number">{{studentsTotal}}</div>
+            </div>
+        </div>
+        <div class="Totalscontainer" id="usersContainer">
+            <div class="contentLeft">
+                <div class="imgContainer">
+                    <img src="{{url_for('static', filename='images/svg_website/staff.svg')}}" alt="Img container">
+                </div>
+                <div class="colorContainer" id="staffColor">
+                    <div class="liceuColor">
+                        <div class="hoverProc">{{procentaj_didactic}}%</div>
+                        <div class="colorText">{{procentaj_didactic}}%</div>
+                    </div>
+                    <div class="profColor">
+                        <div class="hoverProc">{{procentaj_nedidactic}}%</div>
+                        <div class="colorText">{{procentaj_nedidactic}}%</div>
+                    </div>
+                </div>
+            </div>
+            <div class="contentRight">
+                <div class="contentTitle">PERSONAL</div>
+                <div class="classType">
+                    <div class="liceu">
+                        <div class="colorLiceu"></div>
+                        <div class="contentType">DIDACTIC ({{ procentaj_didactic }}%)</div>
+                    </div>
+                    <div class="prof">
+                        <div class="colorProf"></div>
+                        <div class="contentType">NEDIDACTIC ({{ procentaj_nedidactic }}%)</div>
+                    </div>
+                </div>
+                <div class="number">{{staffTotal}}</div>
+            </div>
+        </div>
+    </div>
+    <div class="containerBottom">
+        <div class="Totalscontainer" id="filesContainer">
+            <div class="contentLeft">
+                <div class="imgContainer">
+                    <img src="{{url_for('static', filename='images/svg_website/files-dark.svg')}}" alt="Files Logo">
+                </div>
+                <div class="colorContainer" id="filesColor">
+                    <div class="liceuColor">
+                        <div class="hoverProc">{{firstType['percentage']}}%</div>
+                        <div class="colorText">{{firstType['percentage']}}%</div>
+                    </div>
+                    <div class="profColor">
+                        <div class="hoverProc">{{secondType['percentage']}}%</div>
+                        <div class="colorText">{{secondType['percentage']}}%</div>
+                    </div>
+                    <div class="otherColor">
+                        {% set other = 100 - firstType['percentage'] - secondType['percentage'] %}
+                        <div class="hoverProc">{{other}}%</div>
+                    </div>
+                </div>
+            </div>
+            <div class="contentRight">
+                <div class="contentTitle">FISIERE</div>
+                <div class="classType">
+                    <div class="liceu">
+                        <div class="colorLiceu"></div>
+                        <div class="contentType">.{{firstType['name']}} ({{firstType['percentage']}}%)</div>
+                    </div>
+                    <div class="prof">
+                        <div class="colorProf"></div>
+                        <div class="contentType">.{{secondType['name']}} ({{secondType['percentage']}}%)</div>
+                    </div>
+                </div>
+                <div class="number">{{filesTotal}}</div>
+            </div>
+        </div>
+        <div class="Totalscontainer" id="inventoryContainer">
+            <div class="contentLeft">
+                <div class="imgContainer">
+                    <img src="{{url_for('static', filename='images/svg_website/inventory-black.svg')}}" alt="Inventory Logo">
+                </div>
+                <div class="colorContainer" id="inventoryColor">
+                    <div class="liceuColor">
+                        <div class="hoverProc">{{procentaj_invNedid}}%</div>
+                        <div class="colorText">{{procentaj_invNedid}}%</div>
+                    </div>
+                    <div class="profColor">
+                        <div class="hoverProc">{{procentaj_invDid}}%</div>
+                        <div class="colorText">{{procentaj_invDid}}%</div>
+                    </div>
+                </div>
+            </div>
+            <div class="contentRight">
+                <div class="contentTitle">INVENTAR</div>
+                <div class="classType">
+                    <div class="liceu">
+                        <div class="colorLiceu"></div>
+                        <div class="contentType">NEDIDACTIC ({{procentaj_invNedid}}%)</div>
+                    </div>
+                    <div class="prof">
+                        <div class="colorProf"></div>
+                        <div class="contentType">DIDACTIC ({{procentaj_invDid}}%)</div>
+                    </div>
+                </div>
+                <div class="number">{{inventoryTotal}}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="last-users">
+    <div class="usersContainer">
+        <div class="tableTitle">Recently registered users</div>
+        <div class="allUsers">
+            <a href="{{url_for('views.allUsers')}}">view all users</a>
+        </div>
+        <div class="userTable">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="name">Nume</th>
+                        <th class="rowDisplay id" style="margin-left: 0;">
+                            <div class="thBorder"></div>
+                            <div class="thTitle">ID</div>
+                        </th>
+                        <th class="rowDisplay role">
+                            <div class="thBorder"></div>
+                            <div class="thTitle">Rol</div>
+                        </th>
+                        <th class="rowDisplay email">
+                            <div class="thBorder"></div>
+                            <div class="thTitle">Email</div>
+                        </th>
+                        <th class="rowDisplay date">
+                            <div class="thBorder"></div>
+                            <div class="thTitle">Data</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr class="user-row" data-user-id="{{ user.id }}">
+                            <td class="name firstTD" style="margin-left: 0;">{{ user.name }}</td>
+                            <td class="id">{{ user.id }}</td>
+                            <td class="role">{{ user.role }}</td>
+                            <td class="email">{{ user.email }}</td>
+                            <td class="date lastTD" style="margin-right: 0;">{{ user.date }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                
+                <script>
+                    $(document).ready(function() {
+                        checkWidth();
+                        $(window).resize(function(){
+                            checkWidth();
+                        });
+                        
+                        //students
+                        var liceuProc = {{procentaj_liceu}};
+                        var profProc = {{procentaj_prof}};
+                        //staff
+                        var didacticProc = {{procentaj_didactic}};
+                        var nedidacticProc = {{procentaj_nedidactic}};
+                        //inventory
+                        var invDidProc = {{procentaj_invDid}};
+                        var invNedidProc = {{procentaj_invNedid}};
+                        //files
+                        var fileFirst = {{firstType['percentage']}};
+                        var fileSecond = {{secondType['percentage']}};
+
+                        if(liceuProc + profProc != 100){
+                            $("#studentsColor .otherColor").css('display', 'flex');
+                            var otherProc = 100 - liceuProc - profProc
+                            $("#studentsColor .otherColor").css('width', otherProc + '%');
+                        }
+                        //students
+                        if(liceuProc != 0){
+                            $("#studentsColor .liceuColor").css('display', 'flex');
+                            $("#studentsColor .liceuColor").css('width', liceuProc + '%');
+                        } 
+                        if (profProc != 0) {
+                            $("#studentsColor .profColor").css('display', 'flex');
+                            $("#studentsColor .profColor").css('width', profProc + '%');
+                        } 
+                        //staff
+                        if (didacticProc != 0) {
+                            $("#staffColor .liceuColor").css('display', 'flex');
+                            $("#staffColor .liceuColor").css('width', didacticProc + '%');
+                        } 
+                        if(nedidacticProc != 0) {
+                            $("#staffColor .profColor").css('display', 'flex');
+                            $("#staffColor .profColor").css('width', nedidacticProc + '%');
+                        }
+                        //inventory
+                        if (invDidProc != 0) {
+                            $("#inventoryColor .profColor").css('display', 'flex');
+                            $("#inventoryColor .liceuColor").css('width', invNedidProc + '%');
+                        } 
+                        if(invNedidProc != 0) {
+                            $("#inventoryColor .liceuColor").css('display', 'flex');
+                            $("#inventoryColor .profColor").css('width', invDidProc + '%');
+                        }
+                        //files
+                        if(fileFirst != 0) {
+                            $("#filesColor .liceuColor").css('display', 'flex');
+                            $("#filesColor .liceuColor").css('width', fileFirst + '%');
+                        }
+                        if(fileSecond != 0) {
+                            $("#filesColor .profColor").css('display', 'flex');
+                            $("#filesColor .profColor").css('width', fileSecond + '%');
+                        }
+                        if(fileFirst + fileSecond != 100){
+                            $("#filesColor .otherColor").css('display', 'flex');
+                            var otherProc = 100 - fileFirst - fileSecond
+                            $("#filesColor .otherColor").css('width', otherProc + '%');
+                        }
+
+
+                        $(".user-row").on('click', function(event) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            
+                            // Find the user ID associated with the clicked row
+                            var userId = $(this).data('user-id');
+                            
+                            fetchUserData(userId);
+                        });
+
+                        var editBtn = $(".editBtn");
+
+                        editBtn.on('click', function(){
+                            var userId = $(this).data('user-id');
+                            window.location.href = "{{ url_for('import.change', user_id = '') }}" + userId;
+                        });
+
+                        var deleteBtn = $(".deleteBtn");
+
+                        deleteBtn.on('click', function(){
+                            var userId = $(this).data('user-id');
+                            $("#confirmationModal").modal("show");
+                            $("#confirmationModal").attr('data-user-id', userId);
+                        });
+
+                        $("#confirmActionBtn").on('click', function(){
+                            var userId = $("#confirmationModal").data('user-id');
+                            window.location.href = "{{url_for('import.delete', user_id='')}}" + userId;
+                        });
+
+                        $("#studentContainer").on('click', function() {
+                            window.location.href = '{{url_for("views.students")}}'
+                        });
+                        $("#usersContainer").on('click', function() {
+                            window.location.href = '{{url_for("views.staff")}}'
+                        });
+                        $("#filesContainer").on('click', function() {
+                            window.location.href = '{{url_for("views.allUsers")}}'
+                        });
+                        $("#inventoryContainer").on('click', function() {
+                            window.location.href = '{{url_for("results.inventory")}}'
+                        });
+                    });
+                    function checkWidth(){
+                        var windowWidth = $(window).width();
+                        
+                        //Liceu Area
+                        var liceuColorWidth = $("#studentsColor .liceuColor").width();
+                        var liceuTextWidth = $("#studentsColor .liceuColor .colorText").width();
+
+                        if(liceuColorWidth <= (liceuTextWidth + 10)) {
+                            $("#studentsColor .liceuColor .colorText").css('display', 'none');
+                            $("#studentsColor .liceuColor").hover(
+                                function() {
+                                    $("#studentsColor .liceuColor .hoverProc").css('opacity', 1);
+                                    $("#studentsColor .liceuColor .hoverProc").css('color', '#030303');
+                                },
+                                function(){
+                                    $("#studentsColor .liceuColor .hoverProc").css('opacity', 0);
+                                }
+                            )
+                        } else {
+                            // Display the colorText if the width is larger than the threshold
+                            $("#studentsColor .liceuColor .colorText").css('display', 'flex');
+                        }
+
+                        //Prof Area
+                        var profColorWidth = $("#studentsColor .profColor").width();
+                        var profTextWidth = $("#studentsColor .profColor .colorText").width();
+
+                        if(profColorWidth <= (profTextWidth + 10)) {
+                            $("#studentsColor .profColor .colorText").css('display', 'none');
+                            $("#studentsColor .profColor").hover(
+                                function() {
+                                    $("#studentsColor .profColor .hoverProc").css('opacity', 1);
+                                    $("#studentsColor .profColor .hoverProc").css('color', '#030303');
+                                },
+                                function(){
+                                    $("#studentsColor .profColor .hoverProc").css('opacity', 0);
+                                }
+                            )
+                        } else {
+                            // Display the colorText if the width is larger than the threshold
+                            $("#studentsColor .profColor .colorText").css('display', 'flex');
+                        }
+
+                        //Didactic Area
+                        var didacticColorWidth = $("#staffColor .liceuColor").width();
+                        var didacticTextWidth = $("#staffColor .liceuColor .colorText").width();
+
+                        if(didacticColorWidth <= (didacticTextWidth + 10)) {
+                            $("#staffColor .liceuColor .colorText").css('display', 'none');
+                            $("#staffColor .liceuColor").hover(
+                                function() {
+                                    $("#staffColor .liceuColor .hoverProc").css('opacity', 1);
+                                    $("#staffColor .liceuColor .hoverProc").css('color', '#030303');
+                                },
+                                function(){
+                                    $("#staffColor .liceuColor .hoverProc").css('opacity', 0);
+                                }
+                            )
+                        } else {
+                            // Display the colorText if the width is larger than the threshold
+                            $("#staffColor .liceuColor .colorText").css('display', 'flex');
+                        }
+
+                        //Nedidactic Area
+                        var nedidacticColorWidth = $("#staffColor .profColor").width();
+                        var nedidacticTextWidth = $("#staffColor .profColor .colorText").width();
+
+                        if(nedidacticColorWidth <= (nedidacticTextWidth + 10)) {
+                            $("#staffColor .profColor .colorText").css('display', 'none');
+                            $("#staffColor .profColor").hover(
+                                function() {
+                                    $("#staffColor .profColor .hoverProc").css('opacity', 1);
+                                    $("#staffColor .profColor .hoverProc").css('color', '#030303');
+                                },
+                                function(){
+                                    $("#staffColor .profColor .hoverProc").css('opacity', 0);
+                                }
+                            )
+                        } else {
+                            // Display the colorText if the width is larger than the threshold
+                            $("#staffColor .profColor .colorText").css('display', 'flex');
+                        }
+
+                        //Inventory Didactic Area
+                        var inventoryColorWidth = $("#inventoryColor .profColor").width();
+                        var inventoryTextWidth = $("#inventoryColor .profColor .colorText").width();
+
+                        if(inventoryColorWidth <= (inventoryTextWidth + 10)) {
+                            $("#inventoryColor .profColor .colorText").css('display', 'none');
+                            $("#inventoryColor .profColor").hover(
+                                function() {
+                                    $("#inventoryColor .profColor .hoverProc").css('opacity', 1);
+                                    $("#inventoryColor .profColor .hoverProc").css('color', '#030303');
+                                },
+                                function(){
+                                    $("#inventoryColor .profColor .hoverProc").css('opacity', 0);
+                                }
+                            )
+                        } else {
+                            // Display the colorText if the width is larger than the threshold
+                            $("#inventoryColor .profColor .colorText").css('display', 'flex');
+                        }
+
+                        //Inventory Nedidactic Area
+                        var inventoryNedColorWidth = $("#inventoryColor .liceuColor").width();
+                        var inventoryNedTextWidth = $("#inventoryColor .liceuColor .colorText").width();
+
+                        if(inventoryNedColorWidth <= (inventoryNedTextWidth + 10)) {
+                            $("#inventoryColor .liceuColor .colorText").css('display', 'none');
+                            $("#inventoryColor .liceuColor").hover(
+                                function() {
+                                    $("#inventoryColor .liceuColor .hoverProc").css('opacity', 1);
+                                    $("#inventoryColor .liceuColor .hoverProc").css('color', '#030303');
+                                },
+                                function(){
+                                    $("#inventoryColor .liceuColor .hoverProc").css('opacity', 0);
+                                }
+                            )
+                        } else {
+                            // Display the colorText if the width is larger than the threshold
+                            $("#inventoryColor .liceuColor .colorText").css('display', 'flex');
+                        }
+
+                        //Files First Area
+                        var filesColorWidth = $("#filesColor .liceuColor").width();
+                        var filesTextWidth = $("#filesColor .liceuColor .colorText").width();
+
+                        if(filesColorWidth <= (filesTextWidth + 10)) {
+                            $("#filesColor .liceuColor .colorText").css('display', 'none');
+                            $("#filesColor .liceuColor").hover(
+                                function() {
+                                    $("#filesColor .liceuColor .hoverProc").css('opacity', 1);
+                                    $("#filesColor .liceuColor .hoverProc").css('color', '#030303');
+                                },
+                                function(){
+                                    $("#filesColor .liceuColor .hoverProc").css('opacity', 0);
+                                }
+                            )
+                        } else {
+                            // Display the colorText if the width is larger than the threshold
+                            $("#filesColor .liceuColor .colorText").css('display', 'flex');
+                        }
+
+                        //Files Second Area
+                        var secondFileColorWidth = $("#filesColor .profColor").width();
+                        var secondFileTextWidth = $("#filesColor .profColor .colorText").width();
+
+                        if(secondFileColorWidth <= (secondFileTextWidth + 10)) {
+                            $("#filesColor .profColor .colorText").css('display', 'none');
+                            $("#filesColor .profColor").hover(
+                                function() {
+                                    $("#filesColor .profColor .hoverProc").css('opacity', 1);
+                                    $("#filesColor .profColor .hoverProc").css('color', '#030303');
+                                },
+                                function(){
+                                    $("#filesColor .profColor .hoverProc").css('opacity', 0);
+                                }
+                            )
+                        } else {
+                            // Display the colorText if the width is larger than the threshold
+                            $("#filesColor .profColor .colorText").css('display', 'flex');
+                        }
+
+
+                    }
+                    function fetchUserData(userId){
+                        $.ajax({
+                            url: "{{url_for('views.getUserData', userId='')}}" + userId,
+                            method: 'GET',
+                            success: function(data){
+                                if (data.role == 'Elev') {
+                                    $("#studentDetails").show();
+                                    $("#otherDetails").hide();
+                                    $("#events").hide();
+
+                                    //Form Details
+                                    $("#studentDetails .userID").text(data.id);
+                                    $("#studentDetails .userNume").text(data.name);
+                                    $("#studentDetails .userSndName").text(data.sndName);
+                                    $("#studentDetails .userClass").text(data.class);
+                                    $("#studentDetails .userEmail").text(data.email);
+                                    $("#studentDetails .userPhone").text(data.phone);
+                                    $("#studentDetails .userAddress").text(data.address);
+                                    $("#studentDetails .userCreate").text(data.create);
+                                    $("#studentDetails a").attr('href', "{{url_for('import.reset_password', user_id = '')}}" + data.id);
+                                    $("#studentDetails #editBtn").attr('data-user-id', data.id);
+                                    $("#studentDetails #deleteBtn").attr('data-user-id', data.id);
+                                } else {
+                                    $("#otherDetails").show();
+                                    $("#studentDetails").hide();
+                                    $("#events").hide();
+
+                                    //Form Details
+                                    $("#otherDetails .userID").text(data.id);
+                                    $("#otherDetails .userNume").text(data.name);
+                                    $("#otherDetails .userSndName").text(data.sndName);
+                                    $("#otherDetails .userRole").text(data.role);
+                                    $("#otherDetails .userCalif").text(data.calif);
+                                    $("#otherDetails .userEmail").text(data.email);
+                                    $("#otherDetails .userPhone").text(data.phone);
+                                    $("#otherDetails .userAddress").text(data.address);
+                                    $("#otherDetails .userCreate").text(data.create);
+                                    $("#otherDetails a").attr('href', "{{url_for('import.reset_password', user_id = '')}}" + data.id);
+                                    $("#otherDetails #editBtn").attr('data-user-id', data.id);
+                                    $("#otherDetails #deleteBtn").attr('data-user-id', data.id);
+                                }
+                            },
+                            error: function(error){
+                                console.error('Error: ', error);
+                            }
+                        });
+                    }
+                </script>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Confirmation -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Placeholder for dynamic content -->
+                <div id="confirmationModalContent">Are you sure you want to delete this item?</div>
+            </div>
+            <div class="modal-footer">
+                <!-- Confirmation button with a dynamic action -->
+                <button type="button" class="btn btn-danger" id="confirmActionBtn">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

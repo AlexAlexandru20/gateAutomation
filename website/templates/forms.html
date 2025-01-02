@@ -1,0 +1,1162 @@
+{% extends 'base.html' %} {% block title %} Formulare {% endblock %} {% block
+content %}
+<div id="add-user" class="center-form">
+    <form method="POST" action="{{ url_for('import.add_user') }}">
+        <legend>Adaugare User</legend>
+        <div class="row">
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Numele" aria-label="Numele" name="user_name"
+                    id="user_name" required />
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Prenumele" aria-label="Prenumele"
+                    name="user_sndname" id="user_sndname" required />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Adresa" aria-label="Adresa"
+                    name="user_address" id="user_address" required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <input type="email" class="form-control" placeholder="Email" aria-label="Email" name="user_email"
+                    id="user_email" required />
+            </div>
+            <div class="col">
+                <input type="tel" class="form-control" placeholder="Telefon" aria-label="Telefon" name="user_phone"
+                    id="user_phone" required />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <select id="rolSelect" name="rolSelect" class="form-select" aria-label="Optiuni rol personal"
+                    onchange="updateCalificareOptionsAdd()">
+                    <option selected disabled>Rolul in scoala</option>
+                    <option value="director">Director</option>
+                    <option value="tehnic">Tehnic</option>
+                    <option value="profesor">Profesor</option>
+                    <option value="elev">Elev</option>
+                </select>
+            </div>
+            <div class="col">
+                <select id="calificareSelect" name="calificareSelect" class="form-select"
+                    aria-label="Optiuni calificare personal">
+                    <option selected disabled>Calificare</option>
+                </select>
+            </div>
+        </div>
+        <div class="row elevType">
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Tipul învățământului" aria-label="UserType"
+                    name="user_type" id="user_type">
+            </div>
+        </div>
+        <div class="btnUpdate">
+            <button type="submit" class="updateButton">Modifica</button>
+        </div>
+    </form>
+</div>
+
+
+<div id="edit_users" class="center-form">
+    {% if user %}
+    <legend>Modificare User - <div style="color:red; margin-left:5px">{{user.id}}</div></legend>
+    <div class="imgSection">
+        <div class="imgContainer">
+            <div class="img" id="userImgModify">
+                <img src="{{url_for('static', filename='images/svg_website/userIcon.png')}}" alt="User Logo">
+            </div>
+        </div>
+        <div class="imgBtns">
+            <button type="button" id="imgChangeBtn">
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10.1954 5.99598L10.9619 6.76254L3.41298 14.3115H2.64642V13.5449L10.1954 5.99598ZM13.195 0.980011C12.9866 0.980011 12.77 1.06333 12.6117 1.22164L11.0869 2.74643L14.2115 5.871L15.7363 4.34621C16.0612 4.02126 16.0612 3.49633 15.7363 3.17137L13.7865 1.22164C13.6199 1.055 13.4116 0.980011 13.195 0.980011ZM10.1954 3.63798L0.97998 12.8534V15.9779H4.10455L13.3199 6.76254L10.1954 3.63798Z" fill="white"/>
+                </svg>
+                Schimbă</button>
+            <button type="button" id="imgDeleteBtn">
+                <svg width="15" height="19" viewBox="0 0 15 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1.29999 16.98C1.29999 18.08 2.19999 18.98 3.29999 18.98H11.3C12.4 18.98 13.3 18.08 13.3 16.98V4.98H1.29999V16.98ZM3.75999 9.86L5.16999 8.45L7.29999 10.57L9.41999 8.45L10.83 9.86L8.70999 11.98L10.83 14.1L9.41999 15.51L7.29999 13.39L5.17999 15.51L3.76999 14.1L5.88999 11.98L3.75999 9.86ZM10.8 1.98L9.79999 0.979996H4.79999L3.79999 1.98H0.299988V3.98H14.3V1.98H10.8Z" fill="#C90909"/>
+                </svg>
+                Elimină</button>
+        </div>
+    </div>
+    <form method="POST" action="{{ url_for('import.change', user_id = user.id) }}">
+        <div class="row">
+            <div class="leftInput">
+                <label for="inputName">Nume</label>
+                <input type="text" name="inputName" id="inputName" value="{{user.nume}}" />
+            </div>
+            <div class="rightInput">
+                <label for="inputSndname" >Prenume</label>
+                <input type="text" name="inputSndname" id="inputSndname" value="{{user.prenume}}" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="leftInput">
+                <label for="rolSelectChange">Rol</label>
+                <div id="rolSelectDiv">
+                    <select id="rolSelectChange" name="rolSelectChange" aria-label="Optiuni rol personal" onchange="updateCalificareOptions()">
+                        <option selected disabled>{{user.rol}}</option>
+                        <option value="director">Director</option>
+                        <option value="tehnic">Tehnic</option>
+                        <option value="profesor">Profesor</option>
+                        <option value="elev">Elev</option>
+                    </select>
+                </div>
+            </div>
+            <div class="rightInput">
+                <label for="calificareSelectChange">Calificare</label>
+                <div id="calificareSelectDiv">
+                    <select id="calificareSelectChange" name="calificareSelectChange" aria-label="Optiuni rol personal">
+                        <option selected disabled>{{user.calificare}}</option>
+                        <!-- Options will be dynamically populated by JavaScript -->
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="leftInput">
+                <label for="inputEmail">Email</label>
+                <input type="email" name="inputEmail" id="inputEmail" value="{{user.email}}" />
+            </div>
+            <div class="rightInput">
+                <label for="inputTelefon">Telefon</label>
+                <input type="number" name="inputTelefon" id="inputTelefon" value="{{user.telefon}}" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label for="inputAddress">Adresa</label>
+                <input type="text" name="inputAddress" id="inputAddress" value="{{user.adresa}}" />
+            </div>
+        </div>
+        <div class="btnUpdate">
+            <button type="submit" class="updateButton">Modifica</button>
+        </div>
+    </form>
+    {% endif %}
+</div>
+<script>
+    $(document).ready(function() {
+        $("#imgChangeBtn").on('click', function() {
+            $("#pictureModal").modal('show');
+        });
+        $(".headerBtn").on('click', function() {
+            if($(".btnContent").css('display') == 'none'){
+                $(".btnContent").css('display', 'flex');
+            } else{
+                $(".btnContent").css('display', 'none');
+            }
+        });
+    });
+</script>
+
+<!-- Picture Details Modal -->
+<div class="modal fade pictureModal" id="pictureModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" data-bs-dismiss="modal" aria-label="Close" class="headerBtn">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14.6418 0.420671C14.2277 0.00656368 13.5588 0.00656368 13.1447 0.420671L7.95239 5.60232L2.76013 0.410052C2.34602 -0.00405469 1.67708 -0.00405469 1.26297 0.410052C0.848866 0.824159 0.848866 1.4931 1.26297 1.90721L6.45524 7.09947L1.26297 12.2917C0.848866 12.7058 0.848866 13.3748 1.26297 13.7889C1.67708 14.203 2.34602 14.203 2.76013 13.7889L7.95239 8.59663L13.1447 13.7889C13.5588 14.203 14.2277 14.203 14.6418 13.7889C15.0559 13.3748 15.0559 12.7058 14.6418 12.2917L9.44955 7.09947L14.6418 1.90721C15.0453 1.50372 15.0453 0.824159 14.6418 0.420671Z" fill="black"/>
+            </svg>
+          </button>
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">Cont SchoolSYS</h1>
+          <div class="moreBtn">
+            <button type="button" class="headerBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 18 16">
+                    <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+                </svg>
+            </button>
+            <div class="btnContent">
+                <div id="contentText">
+                    Trimite feedback
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+            <div class="bodyTitle">Fotografie de profil</div>
+            <div class="visibleSection">
+                <div class="visibleContainer" data-bs-target="#securityModal" data-bs-toggle="modal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-globe-europe-africa" viewBox="0 0 16 16">
+                        <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0M3.668 2.501l-.288.646a.847.847 0 0 0 1.479.815l.245-.368a.81.81 0 0 1 1.034-.275.81.81 0 0 0 .724 0l.261-.13a1 1 0 0 1 .775-.05l.984.34q.118.04.243.054c.784.093.855.377.694.801-.155.41-.616.617-1.035.487l-.01-.003C8.274 4.663 7.748 4.5 6 4.5 4.8 4.5 3.5 5.62 3.5 7c0 1.96.826 2.166 1.696 2.382.46.115.935.233 1.304.618.449.467.393 1.181.339 1.877C6.755 12.96 6.674 14 8.5 14c1.75 0 3-3.5 3-4.5 0-.262.208-.468.444-.7.396-.392.87-.86.556-1.8-.097-.291-.396-.568-.641-.756-.174-.133-.207-.396-.052-.551a.33.33 0 0 1 .42-.042l1.085.724c.11.072.255.058.348-.035.15-.15.415-.083.489.117.16.43.445 1.05.849 1.357L15 8A7 7 0 1 1 3.668 2.501"/>
+                    </svg>
+                    <div class="visTitle">
+                        Vizibilă pentru oricine
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-right-fill" viewBox="0 0 16 16">
+                        <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="imgSection">
+                <div class="imgContainer">
+                    <div class="img" id="userImgModify">
+                        <img src="{{url_for('static', filename='images/svg_website/userIcon.png')}}" alt="User Logo">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" id="imgChangeBtn" data-bs-target="#pictureChooseModal" data-bs-toggle="modal">
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10.1954 5.99598L10.9619 6.76254L3.41298 14.3115H2.64642V13.5449L10.1954 5.99598ZM13.195 0.980011C12.9866 0.980011 12.77 1.06333 12.6117 1.22164L11.0869 2.74643L14.2115 5.871L15.7363 4.34621C16.0612 4.02126 16.0612 3.49633 15.7363 3.17137L13.7865 1.22164C13.6199 1.055 13.4116 0.980011 13.195 0.980011ZM10.1954 3.63798L0.97998 12.8534V15.9779H4.10455L13.3199 6.76254L10.1954 3.63798Z" fill="white"/>
+                </svg>
+                Schimbă</button>
+            <button type="button" id="imgDeleteBtn">
+                <svg width="15" height="19" viewBox="0 0 15 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1.29999 16.98C1.29999 18.08 2.19999 18.98 3.29999 18.98H11.3C12.4 18.98 13.3 18.08 13.3 16.98V4.98H1.29999V16.98ZM3.75999 9.86L5.16999 8.45L7.29999 10.57L9.41999 8.45L10.83 9.86L8.70999 11.98L10.83 14.1L9.41999 15.51L7.29999 13.39L5.17999 15.51L3.76999 14.1L5.88999 11.98L3.75999 9.86ZM10.8 1.98L9.79999 0.979996H4.79999L3.79999 1.98H0.299988V3.98H14.3V1.98H10.8Z" fill="#C90909"/>
+                </svg>
+                Elimină</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- Picture Choose Modal -->
+<div class="modal fade pictureModal" id="pictureChooseModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" data-bs-target="#pictureModal" data-bs-toggle="modal" class="headerBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+            </svg>
+          </button>
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">Schimbă fotografia de profil</h1>
+          <button type="button" class="headerBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 18 16">
+                <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div class="imgSection">
+                <div class="imgContainer">
+                    <div class="img" id="userImgModify">
+                        <img src="{{url_for('static', filename='images/svg_website/userIcon.png')}}" alt="User Logo">
+                    </div>
+                </div>
+            </div>
+            <div class="description">
+                <div class="row">Trage fotografia aici</div>
+                <div class="row">
+                    <div class="sau">sau</div>
+                </div>
+            </div>
+            <div class="btnSection">
+                <button type="button" id="imgChangeBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-laptop" viewBox="0 0 16 16">
+                        <path d="M13.5 3a.5.5 0 0 1 .5.5V11H2V3.5a.5.5 0 0 1 .5-.5zm-11-1A1.5 1.5 0 0 0 1 3.5V12h14V3.5A1.5 1.5 0 0 0 13.5 2zM0 12.5h16a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 12.5"/>
+                      </svg>
+                    Încarcă din computer</button>
+                <button type="button" id="imgDeleteBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-camera" viewBox="0 0 16 16">
+                        <path d="M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4z"/>
+                        <path d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5m0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0"/>
+                    </svg>
+                    Fotografiază</button>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- Security Choose Modal -->
+<div class="modal fade pictureModal" id="securityModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" data-bs-target="#pictureModal" data-bs-toggle="modal" class="headerBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+            </svg>
+          </button>
+          <h1 class="modal-title fs-5" id="staticBackdropLabel"></h1>
+          <button type="button" class="headerBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 18 16">
+                <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">Alege cine îți va vedea fotografia de profil</div>
+            <div class="choiceContainer">
+                    <form>
+                        <label>
+                            <input type="radio" name="photoSecurity" id="anyone" value="anyone">
+                            <div class="rightSide">
+                                <div class="labelTitle">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-globe-europe-africa" viewBox="0 0 16 16">
+                                        <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0M3.668 2.501l-.288.646a.847.847 0 0 0 1.479.815l.245-.368a.81.81 0 0 1 1.034-.275.81.81 0 0 0 .724 0l.261-.13a1 1 0 0 1 .775-.05l.984.34q.118.04.243.054c.784.093.855.377.694.801-.155.41-.616.617-1.035.487l-.01-.003C8.274 4.663 7.748 4.5 6 4.5 4.8 4.5 3.5 5.62 3.5 7c0 1.96.826 2.166 1.696 2.382.46.115.935.233 1.304.618.449.467.393 1.181.339 1.877C6.755 12.96 6.674 14 8.5 14c1.75 0 3-3.5 3-4.5 0-.262.208-.468.444-.7.396-.392.87-.86.556-1.8-.097-.291-.396-.568-.641-.756-.174-.133-.207-.396-.052-.551a.33.33 0 0 1 .42-.042l1.085.724c.11.072.255.058.348-.035.15-.15.415-.083.489.117.16.43.445 1.05.849 1.357L15 8A7 7 0 1 1 3.668 2.501"/>
+                                    </svg>
+                                    Oricine
+                                </div>
+                                <div class="labelDetails">
+                                    Oricine poate vedea aceste informații dacă are datele tale de contact.
+                                </div>
+                            </div>
+                        </label>
+                        <label>
+                            <input type="radio" name="photoSecurity" id="self" value="self">
+                            <div class="rightSide">
+                                <div class="labelTitle">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill-lock" viewBox="0 0 16 16">
+                                        <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0m-9 8c0 1 1 1 1 1h5v-1a2 2 0 0 1 .01-.2 4.49 4.49 0 0 1 1.534-3.693Q8.844 9.002 8 9c-5 0-6 3-6 4m7 0a1 1 0 0 1 1-1v-1a2 2 0 1 1 4 0v1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1zm3-3a1 1 0 0 0-1 1v1h2v-1a1 1 0 0 0-1-1"/>
+                                    </svg>
+                                    Doar eu
+                                </div>
+                                <div class="labelDetails">
+                                    Doar tu poți vedea aceste informații.
+                                </div>
+                            </div>
+                        </label>
+                    </form>
+            </div>
+            <div class="btns">
+                <button type="button" data-bs-target="#pictureModal" data-bs-toggle="modal" id="abort">Anulează</button>
+                <button type="button" id="save">Salvează</button>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- Add files form -->
+<div id="add-files" class="center-form">
+    <form method="POST" action="{{url_for('import.add_files')}}" enctype="multipart/form-data" id="fileForm">
+        <legend>Adaugare Fisier</legend>
+        <div class="mb-3">
+            <input class="form-control" type="file" id="formFileMultiple" name="files" multiple required />
+        </div>
+        <div class="form-floating mb-3" id="nameInput">
+            <input type="text" name="file-name" class="form-control" id="file-name" placeholder="Numele Fisierului"/>
+            <label for="file-name">Numele Fisierului</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Adauga</button>
+    </form>
+</div>
+
+<!-- Dynamically show name input - forms -->
+<script>
+    let fileInput = document.getElementById('formFileMultiple');
+    let nameContainer = document.getElementById('nameInput');
+    let nameInput = document.getElementById('file-name');
+    let fileForm = document.getElementById('fileForm');
+
+    nameContainer.style.display = 'none';
+
+    fileInput.addEventListener('change', function() {
+        if (fileInput.files.length === 1) {
+            nameContainer.style.display = 'block';
+        } else {
+            nameContainer.style.display = 'none';
+        }
+    });
+</script>
+
+
+<!-- Add Inventar Entry -->
+<div id="add-inventar" class="center-form">
+    <form method="POST" action="{{ url_for('import.add_inventar') }}" id="inventarForm">
+        <legend>Adaugare Obiect de Inventar</legend>
+        <div class="row">
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Denumire" aria-label="Denumire" name="inventarNume"
+                    id="inventarNume" required />
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Cantitate" aria-label="Cantitate"
+                    name="inventarCant" id="inventarCant" minlength="1" required />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Pret/Buc" aria-label="Pret/Buc" name="inventarPret"
+                    id="inventarPret" minlength="0.1" required />
+            </div>
+            {% if current_user.rol not in ['admin', 'tehnic', 'director'] %}
+            {% set name = current_user.nume + ' ' + current_user.prenume %}
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="{{name}}" aria-label="User Name" name="inventarUserName" id="inventarUserName" disabled />
+                </div>
+            {% else %}
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="Numele Detinatorului" aria-label="User Name" name="inventarUserName" id="inventarUserName" required />
+                    <ul id="userList">
+                        <!-- Matching users will be dynamically added here -->
+                    </ul>
+                </div>
+            {% endif %}
+            
+        </div>
+        <button type="submit" class="btn btn-primary">Trimite</button>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function(){
+        var userData;
+        // Function to update the user dropdown
+        function updateUserDropdown(users) {
+            $("#userList").empty();
+            users.forEach(function(user){
+                var listItem = $("<li>").text(user.nume + " - " + user.calificare);
+                listItem.on("click", function(){
+                    // Set the selected user's information in the input field
+                    $("#inventarUserName").val(user.nume + " - " + user.calificare);
+                    // Clear the list
+                    $("#userList").empty();
+                    userData = {
+                        id: user.id,
+                        nume: user.nume,
+                        calificare: user.calificare
+                    };
+                });
+                $("#userList").append(listItem);
+            });
+        }
+
+        // Form submission event
+        $("#inventarForm").submit(function(event){
+            // Prevent the default form submission
+            event.preventDefault();
+
+            // Get form data
+            var formData = {
+                inventarNume: $("#inventarNume").val(),
+                inventarCant: $("#inventarCant").val(),
+                inventarPret: $("#inventarPret").val(),
+                inventarUserName: JSON.stringify(userData)
+            };
+
+            // Send the data to the server using AJAX
+            $.ajax({
+                url: $(this).attr("action"),
+                method: "POST",
+                data: formData,
+                success: function(response){
+                    // Handle the success response
+                    location.reload();
+                },
+                error: function(error){
+                    // Handle the error response
+                    console.error("Error submitting form:", error);
+                }
+            });
+        });
+
+        $("#inventarUserName").on("input", function(){
+            var inputText = $(this).val();
+            $.ajax({
+                url: "{{url_for('import.autocomplete')}}",
+                method: "POST",
+                data: {query: inputText},
+                success: function(data){
+                    if (data && data.suggestions) {
+                        // Update the user list
+                        updateUserDropdown(data.suggestions);
+                    } else {
+                        // Handle case where suggestions are not present
+                        $("#userList").empty();
+                    }
+                },
+                error: function(){
+                    // Handle AJAX error
+                    console.error("Error fetching autocomplete suggestions");
+                }
+            });
+        });
+    });
+</script>
+
+<!-- Transfer Invetory objects -->
+<div id="transfer-inventar" class="center-form">
+    <form method="POST" action="{{ url_for('import.inventarTransfer') }}" id="transferForm">
+        <legend>Transfer Obiect de Inventar</legend>
+        <div class="row">
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Denumire sau ID unic" aria-label="Denumire" name="inventarNewNume"
+                    id="inventarNewNume" required />
+                <ul id="inventarList" class="list-group list-group-flush"></ul>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Cantitate" value="{{cant}}" aria-label="Cantitate"
+                    name="invCant" id="invCant" minlength="1" required />
+            </div>
+        </div>
+        <div class="row">
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="Noul Deținător" aria-label="User Name" name="inventarNewUser" id="inventarNewUser" required />
+                    <ul id="userNewList" class="list-group list-group-flush"></ul>
+                </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Trimite spre aprobare</button>
+    </form>
+</div>
+<script>
+    $(document).ready(function() {
+        var invData;
+        var userData;
+        //Inventar Dropdown
+        $('#inventarNewNume').on("input", function () {
+            var inputText = $(this).val();
+            $.ajax({
+                url: '{{url_for("import.inventoryID")}}',
+                method: 'POST',
+                data: {query: inputText},
+                success: function(data) {
+                    if (data && data.suggestions){
+                        updateInventoryDrop(data.suggestions);
+                    } else {
+                        $("#inventarList").empty();
+                    }
+                },
+                error: function(error) {
+                    console.error('Error: ', error);
+                }
+            });
+        });
+
+
+        //Users dropdown
+        $("#inventarNewUser").on("input", function() {
+            var userText = $(this).val();
+            $.ajax({
+                url: "{{url_for('import.inventarUsers')}}",
+                method: 'POST',
+                data: {users: userText},
+                success: function(data) {
+                    if(data && data.users) {
+                        updateUsersDropdown(data.users);
+                    } else {
+                        $("#userNewList").empty();
+                    }
+                },
+                error: function (error) {
+                    console.error('Error: ', error);
+                }
+            });
+        });
+
+        $("#invCant").on("input", function() {
+            if (invData) {
+                invData.cant = $(this).val();
+            }
+        });
+
+        $("#transfer-inventar").on('submit', function(event) {
+            event.preventDefault();
+
+            var confirmationContent = "Sigur transferati obiectul de inventar?";
+
+            var confirmationAction = function(){
+                $.ajax({
+                    url: "{{url_for('import.inventarTransfer')}}",
+                    method: 'POST',
+                    contentType: 'application/json;charset=UTF-8',
+
+                    data: JSON.stringify({inventar: invData, useri: userData}),
+                    success: function(){
+                        location.reload();
+                    },
+                    error: function(error){
+                        console.error('Error: ', error);
+                    }
+                });
+            }
+
+            showConfirmationModal(confirmationContent, confirmationAction);
+        });
+        
+        // Function to show the confirmation modal with dynamic content and action
+        function showConfirmationModal(content, action) {
+            // Update modal content
+            document.getElementById('confirmationModalContent').innerHTML = content;
+
+            // Update modal action
+            document.getElementById('confirmActionBtn').onclick = action;
+
+            // Show the confirmation modal
+            $('#confirmationModal').modal('show');
+        }
+
+
+        //Inventory Name
+        function updateInventoryDrop(inventory){
+            $("#inventarList").empty();
+            inventory.forEach(function(inv) {
+                var listItem = $("<li class='list-group-item'>").text(inv.name + " - " + inv.user);
+                listItem.on('click', function(){
+                    $("#inventarNewNume").val(inv.name + " - " + inv.user);
+                    $("#invCant").val(inv.cant);
+                    $("#inventarList").empty();
+
+                    invData = {
+                        uniqueid: inv.uniqueID,
+                        name: inv.name,
+                        cant: inv.cant,
+                        userID: inv.userID
+                    };
+                });
+                $("#inventarList").append(listItem);
+            });
+        }
+
+        //User Names
+        function updateUsersDropdown(users) {
+            $("#userNewList").empty();
+            users.forEach(function(user) {
+                var listItem = $("<li class='list-group-item'>").text(user.name + " - " + user.calificare);
+                    listItem.on('click', function(){
+                        $("#inventarNewUser").val(user.name + " - " + user.calificare);
+                        $("#userNewList").empty();
+                        userData = user.userID;
+                    });
+                $("#userNewList").append(listItem);
+            });
+        }
+    });
+</script>
+
+<!-- Modify Inventar Entry -->
+<div id="modify-inventar" class="center-form">
+    {% if inventar %}
+    <form class="updateForm" action="{{url_for('import.change_inventar', unique_id=inventar.uniqueid)}}" method="POST">
+        <legend>Modificare Inventar - <i>{{inventar.uniqueid}}</i></legend>
+        <div class="mb-3 row">
+            <label for="inventarName" class="col-sm-2 col-form-label bold">Denumire</label>
+            <div class="input-group mb-3">
+                <div class="col-sm-10">
+                    <input type="text" class="form-control-plaintext" name="inventarName" id="inventarName"
+                        value="{{inventar.name}}" />
+                </div>
+                <span class="input-group-text" onclick="selectText(this)">
+                    <img src="{{url_for('static', filename='images/svg_website/caret.svg')}}" alt="Caret IMG" />
+                </span>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="inventarCant" class="col-sm-2 col-form-label bold">Cantitate(buc)</label>
+            <div class="input-group mb-3">
+                <div class="col-sm-10">
+                    <input type="text" class="form-control-plaintext" name="inventarCant" id="inventarCant"
+                        value="{{inventar.cant}}" />
+                </div>
+                <span class="input-group-text" onclick="selectText(this)">
+                    <img src="{{url_for('static', filename='images/svg_website/caret.svg')}}" alt="Caret IMG" />
+                </span>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="inventarPret" class="col-sm-2 col-form-label bold">Pret/Buc</label>
+            <div class="input-group mb-3">
+                <div class="col-sm-10">
+                    <input type="text" class="form-control-plaintext" name="inventarPret" id="inventarPret"
+                        value="{{inventar.price}}" />
+                </div>
+                <span class="input-group-text" onclick="selectText(this)">
+                    <img src="{{url_for('static', filename='images/svg_website/caret.svg')}}" alt="Caret IMG" />
+                </span>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="inventarEmail" class="col-sm-2 col-form-label bold">Detinator</label>
+            <div class="input-group mb-3">
+                <div class="col-sm-10">
+                    <input type="email" class="form-control-plaintext" name="inventarEmail" id="inventarEmail"
+                        value="{{nume_detinator}}" disabled/>
+                </div>
+                <span class="input-group-text" onclick="selectText(this)">
+                    <img src="{{url_for('static', filename='images/svg_website/caret.svg')}}" alt="Caret IMG" />
+                </span>
+            </div>
+        </div>
+        <div class="col-sm-10">
+            <button type="submit" class="btn btn-primary updateButton">
+                Modifica
+            </button>
+        </div>
+    </form>
+    {% endif %}
+</div>
+
+<!--change school info -->
+<div id="modify-school" class="center-form">
+    {% if school %}
+    <form class="updateForm" action="{{url_for('import.change_school')}}" method="POST">
+        <legend>Modificare Detalii Scoala - <i>{{school.school_name}}</i></legend>
+        <div class="mb-3 row">
+            <label for="schoolName" class="col-sm-2 col-form-label bold">Numele</label>
+            <div class="input-group mb-3">
+                <div class="col-sm-10">
+                    <input type="text" class="form-control-plaintext" name="schoolName" id="schoolName"
+                        value="{{school.school_name}}" disabled />
+                </div>
+                <span class="input-group-text">
+                    <img src="{{url_for('static', filename='images/svg_website/caret.svg')}}" alt="Caret IMG" />
+                </span>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="schoolBoss" class="col-sm-2 col-form-label bold">Director</label>
+            <div class="input-group mb-3">
+                <div class="col-sm-10">
+                    <input type="text" class="form-control-plaintext" name="schoolDirector" id="schoolDirector"
+                        value="{{school.director}}" disabled />
+                </div>
+                <span class="input-group-text">
+                    <img src="{{url_for('static', filename='images/svg_website/caret.svg')}}" alt="Caret IMG" />
+                </span>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="schoolAdresa" class="col-sm-2 col-form-label bold">Adresa</label>
+            <div class="input-group mb-3">
+                <div class="col-sm-10">
+                    <input type="text" class="form-control-plaintext" name="schoolAdresa" id="schoolAdresa"
+                        value="{{school.adresa}}" />
+                </div>
+                <span class="input-group-text" onclick="selectText(this)">
+                    <img src="{{url_for('static', filename='images/svg_website/caret.svg')}}" alt="Caret IMG" />
+                </span>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="schoolEmail" class="col-sm-2 col-form-label bold">Email</label>
+            <div class="input-group mb-3">
+                <div class="col-sm-10">
+                    <input type="email" class="form-control-plaintext" name="schoolEmail" id="schoolEmail"
+                        value="{{school.email}}" />
+                </div>
+                <span class="input-group-text" onclick="selectText(this)">
+                    <img src="{{url_for('static', filename='images/svg_website/caret.svg')}}" alt="Caret IMG" />
+                </span>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="schoolPhone" class="col-sm-2 col-form-label bold">Telefon</label>
+            <div class="input-group mb-3">
+                <div class="col-sm-10">
+                    <input type="tel" class="form-control-plaintext" name="schoolPhone" id="schoolPhone"
+                        value="{{school.phone}}" />
+                </div>
+                <span class="input-group-text" onclick="selectText(this)">
+                    <img src="{{url_for('static', filename='images/svg_website/caret.svg')}}" alt="Caret IMG" />
+                </span>
+            </div>
+        </div>
+        <div class="col-sm-10">
+            <button type="submit" class="btn btn-primary" class="updateButton">
+                Modifica
+            </button>
+        </div>
+    </form>
+    {% endif %}
+</div>
+
+<!-- Inventar show -->
+{% if results %}
+    <div id="show-inventar" class="center-form">
+        {% for user_id, user_data in results.items() %}
+            <div class="design user-container {% if loop.first %}active{% endif %}" data-user-id="{{ user_data['userId'] }}">
+                {% if current_user.rol in ['admin', 'tehnic'] %}
+                    <div class="frame-24">
+                {% else %}
+                    <div class="frame-nonadmin">
+                {% endif %}
+                    {% if current_user.rol in ['admin', 'tehnic'] %}
+                        <div class="switchUserButton frame-38080" data-direction="left">
+                            <div class="icon-chevron-left">
+                                <svg class="vector-1" width="40" height="40" viewBox="0 0 40 40" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <g clip-path="url(#clip0_14_452)">
+                                        <path
+                                            d="M40 20C40 9.22372 31.0457 0.487808 20 0.487808C8.9543 0.487808 0 9.22372 0 20C0 30.7763 8.9543 39.5122 20 39.5122C31.0457 39.5122 40 30.7763 40 20Z"
+                                            fill="#F3F3F3" />
+                                        <path d="M23.5 12.6829L16 20L23.5 27.3171" stroke="#111204" stroke-width="3" stroke-linecap="round" />
+                                    </g>
+                                    <defs>
+                                        <clipPath id="clip0_14_452">
+                                            <rect width="40" height="40" fill="white" />
+                                        </clipPath>
+                                    </defs>
+                                </svg>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="typography">{{ user_data['userName'] }}</div>
+                    {% if current_user.rol in ['admin', 'tehnic'] %}
+                        <div class="switchUserButton frame-380802" data-direction="right">
+                            <div class="icon-chevron-right">
+                                <svg class="vector-3" width="40" height="40" viewBox="0 0 40 40" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <g clip-path="url(#clip0_14_458)">
+                                        <path
+                                            d="M40 20C40 9.22372 31.0457 0.487808 20 0.487808C8.9543 0.487808 0 9.22372 0 20C0 30.7763 8.9543 39.5122 20 39.5122C31.0457 39.5122 40 30.7763 40 20Z"
+                                            fill="#F3F3F3" />
+                                        <path d="M16 27.3171L23.5 20L16 12.6829" stroke="#111204" stroke-width="3" stroke-linecap="round" />
+                                    </g>
+                                    <defs>
+                                        <clipPath id="clip0_14_458">
+                                            <rect width="40" height="40" fill="white" />
+                                        </clipPath>
+                                    </defs>
+                                </svg>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="border">
+                    <div class="top-border"></div>
+                </div>
+                <div class="accordion-container">
+                    {% for inventory_item in user_data['inventory'] %}
+                        <div class="accordion-item-1-utilize-figma-components-for-repetition">
+                            <div class="accordion-item-1-utilize-figma-components-for-repetition2 accordion-header">
+                                <div class="frame-28">
+                                    <div class="frame-item-1-toggle"></div>
+                                    <div class="utilize-figma-components-for-repetition">
+                                        {{inventory_item['inventarTitle']}}
+                                    </div>
+                                </div>
+                                <div class="frame-item-1-arrow arrow-down">
+                                    <img src="{{'static/images/svg_website/down-arrow.svg'}}" alt="Right Arrow"/>
+                                </div>
+                            </div>
+                            <div class="accordion-item-1-utilize-figma-components-for-repetition3 accordion-content">
+                                <div class="frame-1">
+                                    <div class="utilize-figma-components-for-repetition-1">
+                                        <strong>Cantitate: </strong> {{inventory_item['inventarCant']}} buc
+                                    </div>
+                                </div>
+                                <div class="frame-2">
+                                    <div class="utilize-figma-components-for-repetition-2">
+                                        <strong>Preț Unitar: </strong> {{inventory_item['inventarPrice']}} RON
+                                    </div>
+                                </div>
+                                <div class="frame-3">
+                                    <div class="utilize-figma-components-for-repetition-3">
+                                        <strong>Valoare Totală: </strong> {{inventory_item['inventarTotalPrice']}} RON
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmationModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">Confirmare</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <!-- Placeholder for dynamic content -->
+            <div id="confirmationModalContent"></div>
+        </div>
+        <div class="modal-footer">
+            <!-- Confirmation button with a dynamic action -->
+            <button type="button" class="btn btn-danger" id="confirmActionBtn">Transfer</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $(".user-container:first").addClass("active");
+
+        $(".switchUserButton").click(function() {
+            var $currentContainer = $(this).closest('.user-container');
+            var direction = $(this).data("direction");
+            var $nextContainer;
+
+            if (direction === "left") {
+                $nextContainer = $currentContainer.prev(".user-container");
+            } else {
+                $nextContainer = $currentContainer.next(".user-container");
+            }
+
+            // Check if it's the last user, then loop back to the first one
+            if ($nextContainer.length === 0 && direction === "right") {
+                $nextContainer = $(".user-container:first");
+            }
+
+            if ($nextContainer.length > 0) {
+                $currentContainer.removeClass("active");
+                $nextContainer.addClass("active");
+            }
+        });
+    });
+</script>
+
+<!-- show details -->
+<script>
+    document.querySelectorAll('.accordion-header').forEach(function(header) {
+        var content = header.nextElementSibling; // Assuming the content is the next sibling
+        var arrow = header.querySelector('.frame-item-1-arrow');
+    
+        if (!content || !arrow) {
+            console.error('Content or arrow not found for header:', header);
+            return; // Exit the function if content or arrow is not found
+        }
+    
+        header.addEventListener('click', function() {
+            if (content.style.display === 'none' || content.style.display === '') {
+                content.style.display = 'block';
+                arrow.classList.add('rotate-arrow');
+            } else {
+                content.style.display = 'none';
+                arrow.classList.remove('rotate-arrow');
+            }
+        });
+    });
+</script>
+
+<!-- Select text from forms -->
+<script>
+    function selectText(spanElement) {
+        var inputElement =
+            spanElement.previousElementSibling.querySelector("input");
+
+        inputElement.select();
+    }
+
+    var spans = document.querySelectorAll(".input-group-text");
+    spans.forEach(function (span) {
+        span.addEventListener("click", function () {
+            selectText(this);
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var rolSelect = document.getElementById("rolSelect");
+        var calificareSelect = document.getElementById("calificareSelect");
+
+        var calificareOptions = {
+            director: ["Director", "Director Adjunct"],
+            tehnic: [
+                "Administrator de patrimoniu",
+                "Secretar",
+                "Contabil",
+                "Informatician",
+                "Laborant",
+                "Tehnician",
+                "Pedagog",
+                "Instructor",
+                "Asistent social",
+                "Corepetitor",
+                "Mediator scolar",
+                "Animator",
+            ],
+            profesor: [
+                "Debutant(stagiar)",
+                "Debutant definitiv",
+                "Grad I",
+                "Grad II",
+                "Grad III",
+                "Maistru Instructor",
+            ],
+            elev: [
+                "Pregatitoare",
+                "I",
+                "II",
+                "III",
+                "IV",
+                "V",
+                "VI",
+                "VII",
+                "VIII",
+                "IX",
+                "X",
+                "XI",
+                "XII",
+                "XIII",
+            ],
+        };
+
+        function updateCalificareOptionsAdd() {
+            calificareSelect.innerHTML =
+                "<option selected disabled>Select Calificare</option>";
+            var selectedRol = rolSelect.value;
+            var selectedRolOptions = calificareOptions[selectedRol];
+
+            selectedRolOptions.forEach(function (option) {
+                var optionElement = document.createElement("option");
+                optionElement.value = option.toLowerCase(); // Set the value to lowercase
+                optionElement.textContent = option;
+                calificareSelect.appendChild(optionElement);
+            });
+            if (selectedRol === 'elev') {
+                $(".elevType").css('display', 'flex');
+            } else {
+                $(".elevType").css('display', 'none');
+            }
+            // Enable the calificareSelectChange when the rolSelectChange changes
+            calificareSelect.disabled = false;
+        }
+
+        // Disable the calificareSelectChange initially
+        calificareSelect.disabled = true;
+
+        rolSelect.addEventListener("change", updateCalificareOptionsAdd);
+
+        // Trigger the update when the page loads
+        updateCalificareOptionsAdd();
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var rolSelectChange = document.getElementById("rolSelectChange");
+        var calificareSelectChange = document.getElementById(
+            "calificareSelectChange"
+        );
+
+        var calificareOptions = {
+            director: ["Director", "Director Adjunct"],
+            tehnic: [
+                "Administrator de patrimoniu",
+                "Secretar",
+                "Contabil",
+                "Informatician",
+                "Laborant",
+                "Tehnician",
+                "Pedagog",
+                "Instructor",
+                "Asistent social",
+                "Corepetitor",
+                "Mediator scolar",
+                "Animator",
+            ],
+            profesor: [
+                "Debutant(stagiar)",
+                "Debutant definitiv",
+                "Grad I",
+                "Grad II",
+                "Grad III",
+                "Maistru Instructor",
+            ],
+            elev: [
+                "Pregatitoare",
+                "I",
+                "II",
+                "III",
+                "IV",
+                "V",
+                "VI",
+                "VII",
+                "VIII",
+                "IX",
+                "X",
+                "XI",
+                "XII",
+                "XIII",
+            ],
+        };
+
+        function updateCalificareOptions() {
+            calificareSelectChange.innerHTML =
+                "<option selected disabled>Select Calificare</option>";
+            var selectedRol = rolSelectChange.value;
+            var selectedRolOptions = calificareOptions[selectedRol];
+
+            selectedRolOptions.forEach(function (option) {
+                var optionElement = document.createElement("option");
+                optionElement.value = option.toLowerCase(); // Set the value to lowercase
+                optionElement.textContent = option;
+                calificareSelectChange.appendChild(optionElement);
+            });
+            if (selectedRol === 'elev') {
+                $(".elevType").css('display', 'flex');
+            } else {
+                $(".elevType").css('display', 'none');
+            }
+            // Enable the calificareSelectChange when the rolSelectChange changes
+            calificareSelectChange.disabled = false;
+        }
+
+        // Disable the calificareSelectChange initially
+        calificareSelectChange.disabled = true;
+
+        rolSelectChange.addEventListener("change", updateCalificareOptions);
+
+        // Trigger the update when the page loads
+        updateCalificareOptions();
+    });
+</script>
+
+<!-- Display different types of forms -->
+<script>
+    $(document).ready(function () {
+        var currentUrl = window.location.href;
+        $("#add-user").css("display", "none");
+        $("#change_user").css("display", "none");
+        $("#add-files").css("display", "none");
+        $("#add-inventar").css("display", "none");
+        $("#show-inventar").css("display", "none");
+        $("#transfer-inventar").css("display", "none");
+
+        if (currentUrl.includes("add_user")) {
+            $("#add-user").css("display", "flex");
+        } else if (currentUrl.includes("change")) {
+            $("#change_user").css("display", "flex");
+        } else if (currentUrl.includes("add-files")) {
+            $("#add-files").css("display", "flex");
+        } else if (currentUrl.includes("add_inventar")) {
+            $("#add-inventar").css("display", "flex");
+        } else if (currentUrl.includes("inventar")){
+            $("#show-inventar").css("display", "flex")
+        } else if(currentUrl.includes("transfer")){
+            $("#transfer-inventar").css("display", "flex");
+        }
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        //formSend
+        $(".btnUpdate button").on('click', function(event) {
+            event.preventDefault();
+            urlForward = $(this).closest('form').attr('action');
+            Swal.fire({
+                title: "Doriți să salvați modificările?",
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: "Save",
+                denyButtonText: `Don't save`
+              }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: urlForward,
+                        type: "POST",
+                        data: $(this).closest('form').serialize(),
+                        success: function () {
+                            location.reload();
+                        },
+                        error: function (error) {
+                            // Handle the error response if needed
+                            console.log("Error:", error);
+                        },
+                    });
+                } else if (result.isDenied) {
+                  Swal.fire("Changes are not saved", "", "info");
+                }
+              });
+        });
+    });
+</script>
+
+
+{% endblock %}

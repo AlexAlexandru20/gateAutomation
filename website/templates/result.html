@@ -1,0 +1,270 @@
+
+<!-- Delete link outside the table -->
+<div id="delete-multiple">
+    <a href="#" id="delete-multiple-link" onclick="deleteItems()"
+        class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">Sterge</a>
+</div>
+<div class="table-result">
+    <table id="result-table" class="table table-striped">
+        <thead>
+            <tr>
+                {% if users %}
+                    {% if data in ['users', 'personal'] %}
+                        <th>Selecteaza</th>
+                    {% endif %}
+                    <th>Nume</th>
+                    <th>Email</th>
+                    <th>Telefon</th>
+                    <th>Tip Cadru</th>
+                    {% if current_user.rol == 'admin' or current_user.calificare == 'informatician' %}
+                        <th class="action-head">Actiuni</th>
+                    {% endif %}
+
+                {% elif inventory %}
+                    {% if data in ['inventar'] %}
+                        <th>Selecteaza</th>
+                    {% endif %}
+                    <th>Nume</th>
+                    <th>Cantitate</th>
+                    <th>Detinator</th>
+                    <th>Valoare Totala(RON)</th>
+                    <th>Cod unic</th>
+                    <th>QR Code</th>
+                    <th class="action-head">Actiuni</th>
+
+                {% elif files %}
+                    <th>Selecteaza</th>
+                    <th>Numele fisierului</th>
+                    <th>Tipul Fisierului</th>
+                    <th class="action-head">Actiuni</th>
+
+                {% elif school %}
+                    <th>Numele</th>
+                    <th>Director</th>
+                    <th>Adresa</th>
+                    <th>Email</th>
+                    <th>Telefon</th>
+                    <th>Personal</th>
+                    {% if current_user.rol == 'admin' or current_user.calificare == 'informatician ' %}
+                        <th>Actiuni</th>
+                    {% endif %}
+
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in users %}
+            <tr>
+                {% if data in ['users', 'personal'] %}
+                <td>
+                    <input type="checkbox" class="exampleCheck_confirm checkable-item tr-type"
+                        data-user-id="{{ row.id }}" data-url-type="users">
+                </td>
+                {% endif %}
+                <td class="bold">
+                    <a href="{{ url_for('import.change', user_id=row.id) }}"
+                        class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{
+                        row.nume }} {{ row.prenume }}</a>
+                </td>
+                <td>{{ row.email }}</td>
+                <td>{{ row.telefon }}</td>
+                <td>{{ row.rol }} - {{ row.calificare }}</td>
+                {% if current_user.rol == 'admin' or current_user.calificare == 'informatician' %}
+                <td class="change-links checkable-item" data-user-id="{{ row.id }}"
+                    data-action-url="{{url_for('import.delete', user_id=row.id)}}">
+                    <a href="{{ url_for('import.change', user_id=row.id) }}"
+                        class="edit-link link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">Editeaza</a>
+                    <a href="#" data-user-id="{{ row.id }}"
+                        data-action-url="{{url_for('import.delete', user_id=row.id)}}" data-bs-toggle="modal"
+                        data-bs-target="#confimationModal"
+                        class="delete-link link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">Sterge</a>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+            {% for row in inventory %}
+            <tr>
+                {% if data in ['inventar'] %}
+                <td>
+                    <input type="checkbox" class="exampleCheck_confirm checkable-item tr-type"
+                        data-user-id="{{ row.uniqueid }}" data-url-type="inventar">
+                </td>
+                {% endif %}
+                <td class="bold">
+                    <a href="{{url_for('import.change_inventar', unique_id=row.uniqueid)}}"
+                        class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{
+                        row.name }}</a>
+                </td>
+                <td>{{ row.cant }}</td>
+                <td>{{ row.user_name }}</td>
+                <td>{{ row.total_price}}</td>
+                <td>{{ row.uniqueid }}</td>
+                <td>
+                    <a href="{{ url_for('static', filename='images/qrcodes/{}.png'.format(row.uniqueid)) }}"
+                        download="qrcode.png">
+                        <img src="{{ url_for('static', filename='images/qrcodes/{}.png'.format(row.uniqueid)) }}"
+                            alt="QRCode" class="qrcode">
+                    </a>
+                </td>
+                <td class="change-links checkable-item" data-user-id="{{row.uniqueid}}"
+                    data-action-url="{{url_for('import.delete_inventar', unique_id=row.uniqueid)}}">
+                            <a href="{{url_for('import.change_inventar', unique_id=row.uniqueid) }}"
+                            class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">Modifica</a>
+                            <a href="#" data-user-id="{{ row.uniqueid }}"
+                            data-action-url="{{url_for('import.delete_inventar', unique_id=row.uniqueid)}}"
+                            data-bs-toggle="modal" data-bs-target="#confirmationModal"
+                            class="delete-link link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">Sterge</a>
+                            <a href="{{url_for('import.inventarTransfer') }}"
+                            class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">Transfer</a>
+                </td>
+            </tr>
+            {% endfor %}
+            {% for row in files %}
+            <tr>
+                {% set userData = row.name + '.' + row.type %}
+                <td>
+                    <input type="checkbox" class="exampleCheck_confirm checkable-item tr-type"
+                        data-user-id="{{userData}}" data-url-type="file">
+                </td>
+                <td class="bold">{{ row.name }}</td>
+                <td>{{ row.type }}</td>
+                <td class="change-links checkable-item" data-user-id="{{userData}}"
+                    data-action-url="{{url_for('import.delete_file', file_name=row.name, file_type=row.type)}}">
+                    <a href="{{ url_for('import.download_file', file_name=row.name|urlencode, file_type=row.type)}}"
+                        class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+                        download="{{ row.name }}">Descarca</a>
+                    <a href="#" data-user-id="{{userData}}"
+                        data-action-url="{{url_for('import.delete_file', file_name=row.name, file_type=row.type)}}"
+                        data-bs-toggle="modal" data-bs-target="#confirmationModal"
+                        class="delete-link link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">Sterge</a>
+                </td>
+            </tr>
+            {% endfor %}
+            {% for row in school %}
+            <tr>
+                <td class="bold">{{ row.school_name }}</td>
+                <td>{{ row.director }}</td>
+                <td>{{ row.adresa }}</td>
+                <td>{{ row.email }}</td>
+                <td>{{ row.phone }}</td>
+                <td>{{ row.pers }}</td>
+                {% if current_user.rol == 'admin' or current_user.calificare == 'informatician ' %}
+                <td class="change-links">
+                    <a href="{{ url_for('import.change_school')}}"
+                        class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">Modifica</a>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal for Confirmation -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Placeholder for dynamic content -->
+                <div id="confirmationModalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <!-- Confirmation button with a dynamic action -->
+                <button type="button" class="btn btn-danger" id="confirmActionBtn">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Event listener for all delete links within ".change-links"
+    document.querySelectorAll('.change-links .delete-link').forEach(function (deleteLink) {
+        deleteLink.addEventListener('click', function (event) {
+            event.preventDefault();
+            // Get data attributes
+            var uniqueId = deleteLink.dataset.userId;
+            var actionUrl = deleteLink.dataset.actionUrl;
+
+            // Customize content and action for delete confirmation
+            var confirmationContent = "Are you sure you want to delete this item?";
+            var confirmationAction = function () {
+                // Action to be performed on confirmation
+                // Replace this with your actual delete logic
+                window.location.href = actionUrl;
+            };
+
+            // Show the confirmation modal with dynamic content and action
+            showConfirmationModal(confirmationContent, confirmationAction);
+        });
+    });
+
+    // Function to show the confirmation modal with dynamic content and action
+    function showConfirmationModal(content, action) {
+        // Update modal content
+        document.getElementById('confirmationModalContent').innerHTML = content;
+
+        // Update modal action
+        document.getElementById('confirmActionBtn').onclick = action;
+
+        // Show the confirmation modal
+        $('#confirmationModal').modal('show');
+    }
+</script>
+<script>
+    var checkableItems = document.querySelectorAll('.checkable-item');
+    var multipleLinks = document.getElementById('delete-multiple');
+    var changeLinks = document.querySelectorAll(".change-links");
+    var actionHead = document.querySelector('.action-head');
+
+    document.addEventListener('change', function (event) {
+        if (event.target.classList.contains('checkable-item')) {
+            // Check if any checkbox is checked
+            var checkedCount = document.querySelectorAll(".checkable-item:checked").length;
+
+            // Ensure actionHead is not null before accessing its style property
+            if (actionHead) {
+                actionHead.style.display = checkedCount > 0 ? 'none' : 'table-cell';
+            }
+
+            changeLinks.forEach(function (changeLink) {
+                changeLink.style.display = checkedCount > 0 ? 'none' : 'table-cell';
+            });
+
+            multipleLinks.style.display = checkedCount > 1 ? 'table-cell' : 'none';
+        }
+    });
+
+    function deleteItems() {
+        var selectedUserIds = Array.from(document.querySelectorAll(".exampleCheck_confirm:checked")).map(function (checkbox) {
+            return checkbox.dataset.userId;
+        });
+
+        if (selectedUserIds.length > 0) {
+            selectedUserIds.forEach(function (userId) {
+                var urlType = document.querySelector('.checkable-item[data-user-id="' + userId + '"]').dataset.urlType;
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '{{url_for("import.deleteMultiple")}}', true);
+                xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+
+                xhr.send(JSON.stringify({ user_ids: [userId], url_type: urlType }));
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 200) {
+                            location.reload();
+                        } else {
+                            console.error('Error deleting users:', xhr.responseText);
+                        }
+                    }
+                };
+            });
+        }
+    }
+
+</script>

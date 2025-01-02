@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% block title %}
+Calendar
+{% endblock %}
+{% block content %}
+<!-- Cloudflare Pages Analytics -->
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "dc4641f860664c6e824b093274f50291"}'></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+
+        var recycleBinEl = document.getElementById('recycleBin');
+        var isInRecycleBin = false;
+
+        var urlSearchParams = new URLSearchParams(window.location.search);
+        var clickedDate = urlSearchParams.get('date');
+        var view = urlSearchParams.get('view');
+
+        $('#recycleBin .fc-event').draggable({
+            zIndex: 999,
+            revert: true,
+            revertDuration: 0
+        });
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            timeZone: 'Europe/Romania',
+            headerToolbar: {
+                left: 'prevYear,prev,today,next,nextYear',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+            },
+            eventDragStart: function (info) {
+                recycleBinEl.style.display = 'block';
+            },
+            eventDragStop: function (info) {
+                recycleBinEl.style.display = 'none';
+            },
+            eventReceive: function(event){
+                var droppedOnDiv = document.getElementById('recycleBin').isPointInside(event.pageX, eventPageY);
+
+                if (droppedOnDiv) {
+                    console.log('Droppped');
+                } else{
+                    console.log('Not Dropped');
+                }
+            },
+            initialView: view || 'dayGridMonth',
+            initialDate: clickedDate,
+            editable: true,
+            selectable: true,
+            dayMaxEvents: true,
+            navLinks: true,
+            select: function (info) {
+
+                // Ask the user for the event title
+                var eventTitle = prompt('Introduceti titlul evenimentului:');
+
+                if (eventTitle !== null && eventTitle !== '') {
+                    var data = {
+                        title: eventTitle,
+                        dates: {
+                            start: info.startStr,
+                            end: info.endStr
+                        }
+                    };
+                    $.ajax({
+                        type: 'POST',
+                        url: '{{url_for("views.calendarGenerator")}}',
+                        data: JSON.stringify(data),
+                        contentType: 'application/json',
+                        success: function (response) {
+                            location.reload()
+                        },
+                        error: function (error) {
+                            alert('Error')
+                        }
+                    })
+                }
+            },
+            dragScroll: true,
+            aspectRatio: 2,
+            firstDay: 1,
+            locale: 'ro',
+            events: [
+                {% for event in events_calendar %}
+                    {
+                        id: '{{event.id}}',
+                        title: '{{event.title}}',
+                        start: '{{event.start}}',
+                        end: '{{event.end}}',
+                        resourceEditable: true
+                    },
+                {% endfor %}
+            ],
+        eventDrop: function (info) {
+            var eventData = {
+                id: info.event.id,
+                start: info.event.startStr,
+                end: info.event.endStr
+            };
+            updateEvent(eventData)
+        },
+        eventResize: function (info) {
+            var eventData = {
+                id: info.event.id,
+                start: info.event.startStr,
+                end: info.event.endStr
+            }
+            updateEvent(eventData)
+        }
+    });
+
+    function updateEvent(eventData) {
+        $.ajax({
+            type: 'POST',
+            url: '{{url_for("views.update_event")}}',
+            data: JSON.stringify(eventData),
+            contentType: 'application/json',
+            error: function (error) {
+                console.error('Error');
+            }
+        });
+    }
+
+    function deleteEvent(event) {
+        var eventId = event.id;
+        $.ajax({
+            type: 'POST',
+            url: '{{url_for("views.delete_event")}}',
+            data: JSON.stringify({ id: eventId }),
+            contentType: 'application/json',
+            success: function (response) {
+                location.reload();
+            },
+            error: function (error) {
+                console.error('Error');
+            }
+        })
+    }
+
+    calendar.render();
+});
+</script>
+<div id="calendar-container">
+    <div id="recycleBin">
+        <img src="{{url_for('static', filename='images/svg_website/delete.svg')}}" alt="Elete Icon">
+    </div>
+    <div id="calendar"></div>
+</div>
+<script src='{{url_for("static", filename="fullcalendar/dist/index.global.js")}}'></script>
+
+
+{% endblock %}

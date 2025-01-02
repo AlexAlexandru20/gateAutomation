@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+    <form method = 'POST' action="{{url_for('chat.chat')}}" class="chat-form">
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input class="form-control" type="text" placeholder="{{current_user.username}}" aria-label="Disabled input example" name="username" disabled>
+        </div>
+        <div class="mb-3">
+            <label for="join" class="form-label">Join a room</label>
+            <div class="join">
+                <input type="text" class="form-control" id="exampleFormControlInput1" name="join" >
+                <button type="submit" name="join-btn" class="btn btn-primary">Join</button>
+            </div>
+        </div>
+        <button type="submit" name="create" class="btn btn-primary">Create a room</button>
+    </form>
+{% endblock %}

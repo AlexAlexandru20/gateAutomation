@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ro-RO">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="author" content="Digital Cyber" />
+  <title>{% block title %}{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    crossorigin="anonymous" />
+  <link rel="stylesheet" href="{{url_for('static', filename='base.css')}}" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.css" />
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@5.10.0/main.js"></script>
+  <script src="{{url_for('static', filename='base.js')}}"></script>
+  <script src="https://static.cloudflareinsights.com/beacon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body class="basePage">
+  {% with messages=get_flashed_messages(with_categories=true) %} 
+    {% if messages %} 
+      {% for category, message in messages %} 
+        {% if category == 'alert' %}
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% else %}
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endif %} 
+      {% endfor %} 
+    {% endif %} 
+  {% endwith %}
+  <div class="bodyContent">
+    <div class="leftBase">
+        <div class="logo-container">
+            <div class="logo">
+                <h2>SchoolSYS</h2>
+            </div>
+        </div>
+        <nav class="nav-body">
+            <div class="nav-container">
+                <div class="navlink">
+                    <div class="links">
+                        <a href="#" id="homeLink" title="Dashboard">
+                            <svg id="dashboardSVG" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M0.75 13.25H10.75V0.75H0.75V13.25ZM0.75 23.25H10.75V15.75H0.75V23.25ZM13.25 23.25H23.25V10.75H13.25V23.25ZM13.25 0.75V8.25H23.25V0.75H13.25Z" fill="#FDFDF5"/>
+                            </svg>
+                        </a>
+                        <a href="{{url_for('news.requests')}}" title="Noutăți">
+                            <div id="newsIcon">
+                                <svg id="newsSVG" width="24" height="30" viewBox="0 0 24 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 29.1666C11.2485 29.1666 10.5279 28.8681 9.99652 28.3367C9.46517 27.8054 9.16666 27.0847 9.16666 26.3333H14.8333C14.8333 27.0847 14.5348 27.8054 14.0035 28.3367C13.4721 28.8681 12.7514 29.1666 12 29.1666ZM23.3333 24.9166H0.666656V22.0833L3.49999 20.6666V12.8749C3.49999 7.97042 5.51307 4.79 9.16666 3.92158V0.833252H14.8333V3.92158C18.4869 4.78858 20.5 7.96758 20.5 12.8749V20.6666L23.3333 22.0833V24.9166ZM12 6.14575C11.1492 6.09081 10.2982 6.25005 9.52478 6.6089C8.7514 6.96775 8.08032 7.51477 7.57291 8.19992C6.6911 9.59471 6.25843 11.2265 6.33332 12.8749V22.0833H17.6667V12.8749C17.7415 11.2265 17.3088 9.59474 16.4271 8.19992C15.9197 7.51477 15.2486 6.96775 14.4752 6.6089C13.7018 6.25005 12.8508 6.09081 12 6.14575Z" fill="#E7E7E7"/>
+                                </svg>
+                                <div class="btnCount"></div>
+                            </div>
+                        </a>
+                        <a href="{{url_for('views.allUsers')}}" title="Secțiunea Utilizatori">
+                            <svg id="allUsersSVG" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g clip-path="url(#clip0_1_204)">
+                                <path d="M10 13.45H9.27501C8.28564 13.4143 7.29948 13.5822 6.37772 13.9435C5.45597 14.3047 4.61829 14.8516 3.91667 15.55L3.71667 15.7834V22.6834H7.11667V18.7667L7.57501 18.25L7.78334 18.0084C8.86828 16.8938 10.219 16.0736 11.7083 15.625C10.9627 15.0576 10.3746 14.3089 10 13.45Z" fill="#FDFDF5"/>
+                                <path d="M26.1167 15.525C25.4151 14.8265 24.5774 14.2797 23.6556 13.9184C22.7339 13.5572 21.7477 13.3892 20.7583 13.425C20.4549 13.4259 20.1517 13.4426 19.85 13.475C19.4684 14.2808 18.8964 14.9815 18.1833 15.5167C19.7733 15.9565 21.2137 16.8207 22.35 18.0167L22.5583 18.25L23.0084 18.7667V22.6917H26.2917V15.7583L26.1167 15.525Z" fill="#FDFDF5"/>
+                                <path d="M9.25002 11.825H9.50835C9.38832 10.7943 9.56916 9.75098 10.029 8.82087C10.4889 7.89075 11.2082 7.11362 12.1 6.58329C11.7767 6.08942 11.3307 5.68796 10.8057 5.41825C10.2806 5.14853 9.69455 5.0198 9.1048 5.04465C8.51505 5.0695 7.94186 5.24709 7.44137 5.56002C6.94087 5.87296 6.53023 6.31051 6.24964 6.82983C5.96906 7.34916 5.82816 7.93245 5.84074 8.52259C5.85332 9.11272 6.01894 9.68948 6.3214 10.1964C6.62385 10.7033 7.05276 11.1229 7.56614 11.4143C8.07951 11.7056 8.65974 11.8586 9.25002 11.8583V11.825Z" fill="#FDFDF5"/>
+                                <path d="M20.3583 11.2C20.3684 11.3916 20.3684 11.5835 20.3583 11.775C20.5182 11.8004 20.6798 11.8143 20.8417 11.8167H21C21.5877 11.7854 22.1572 11.6024 22.6532 11.2856C23.1492 10.9688 23.5547 10.529 23.8302 10.009C24.1057 9.48895 24.2419 8.90644 24.2255 8.31816C24.2091 7.72987 24.0407 7.15586 23.7365 6.65201C23.4324 6.14816 23.0031 5.73163 22.4902 5.44299C21.9773 5.15434 21.3985 5.00341 20.8099 5.00489C20.2214 5.00637 19.6433 5.16021 19.1319 5.45144C18.6205 5.74266 18.1932 6.16134 17.8917 6.66671C18.6459 7.15916 19.2661 7.83113 19.6966 8.62235C20.1271 9.41357 20.3545 10.2993 20.3583 11.2Z" fill="#FDFDF5"/>
+                                <path d="M14.8917 14.9333C16.9489 14.9333 18.6167 13.2655 18.6167 11.2083C18.6167 9.15102 16.9489 7.48328 14.8917 7.48328C12.8344 7.48328 11.1667 9.15102 11.1667 11.2083C11.1667 13.2655 12.8344 14.9333 14.8917 14.9333Z" fill="#FDFDF5"/>
+                                <path d="M15.0916 16.9166C14.0033 16.8727 12.9174 17.0494 11.8992 17.4361C10.8809 17.8227 9.95145 18.4114 9.16665 19.1666L8.95831 19.4V24.675C8.96156 24.8468 8.99864 25.0163 9.06741 25.1738C9.13618 25.3313 9.23531 25.4737 9.35912 25.5929C9.48294 25.712 9.62903 25.8056 9.78903 25.8684C9.94903 25.9311 10.1198 25.9616 10.2916 25.9583H19.8666C20.0385 25.9616 20.2093 25.9311 20.3693 25.8684C20.5293 25.8056 20.6753 25.712 20.7992 25.5929C20.923 25.4737 21.0221 25.3313 21.0909 25.1738C21.1597 25.0163 21.1967 24.8468 21.2 24.675V19.4166L21 19.1666C20.2202 18.4091 19.294 17.8188 18.278 17.4319C17.2621 17.045 16.1778 16.8696 15.0916 16.9166Z" fill="#FDFDF5"/>
+                                </g>
+                                <defs>
+                                <clipPath id="clip0_1_204">
+                                <rect width="30" height="30" fill="white"/>
+                                </clipPath>
+                                </defs>
+                            </svg>
+                        </a>
+                        <a href="{{url_for('views.students')}}" title="Secțiunea elevi">
+                            <svg id="studentSVG" width="30" height="28" viewBox="0 0 30 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g filter="url(#filter0_d_1_197)">
+                                <path d="M26.543 4.60937L15.293 0.859366C15.1021 0.800622 14.8979 0.800622 14.707 0.859366L3.46874 4.60937H3.44531L3.32812 4.66796H3.3164L3.19921 4.73827C3.19921 4.74999 3.18749 4.74999 3.17577 4.76171L3.08202 4.84374L2.99999 4.93749C2.99999 4.94921 2.98827 4.94921 2.98827 4.96093L2.91796 5.0664C2.91796 5.07812 2.91796 5.07812 2.90624 5.08983L2.85937 5.1953L2.82421 5.32421V5.35937C2.81265 5.40529 2.80869 5.45279 2.81249 5.49999V14.875C2.81249 15.1236 2.91127 15.3621 3.08708 15.5379C3.2629 15.7137 3.50135 15.8125 3.74999 15.8125C3.99863 15.8125 4.23709 15.7137 4.41291 15.5379C4.58872 15.3621 4.68749 15.1236 4.68749 14.875V6.80077L8.62499 8.11327C7.88526 9.29733 7.49527 10.6664 7.49999 12.0625C7.50042 13.3322 7.82321 14.5811 8.43811 15.692C9.05301 16.8029 9.93988 17.7395 11.0156 18.4141C8.78015 19.2597 6.8717 20.7947 5.5664 22.7969C5.43335 23.0073 5.38828 23.2615 5.44088 23.5048C5.49349 23.7481 5.63957 23.961 5.84765 24.0976C5.94976 24.1653 6.06429 24.212 6.18459 24.2351C6.30488 24.2582 6.42857 24.2572 6.54847 24.2321C6.66837 24.207 6.7821 24.1584 6.88308 24.0891C6.98405 24.0197 7.07026 23.931 7.13671 23.8281C7.98764 22.5174 9.15273 21.4401 10.526 20.6944C11.8993 19.9486 13.4373 19.558 15 19.558C16.5627 19.558 18.1007 19.9486 19.474 20.6944C20.8473 21.4401 22.0123 22.5174 22.8633 23.8281C22.9489 23.9581 23.0654 24.0647 23.2025 24.1383C23.3396 24.212 23.4928 24.2504 23.6484 24.25C23.828 24.2519 24.0039 24.1987 24.1523 24.0976C24.3604 23.961 24.5065 23.7481 24.5591 23.5048C24.6117 23.2615 24.5666 23.0073 24.4336 22.7969C23.1283 20.7947 21.2198 19.2597 18.9844 18.4141C20.0601 17.7395 20.947 16.8029 21.5619 15.692C22.1768 14.5811 22.4996 13.3322 22.5 12.0625C22.5047 10.6664 22.1147 9.29733 21.375 8.11327L26.543 6.39062C26.7305 6.32897 26.8938 6.20968 27.0096 6.04975C27.1254 5.88982 27.1877 5.69743 27.1877 5.49999C27.1877 5.30256 27.1254 5.11016 27.0096 4.95023C26.8938 4.79031 26.7305 4.67102 26.543 4.60937ZM15 17.6875C13.5081 17.6875 12.0774 17.0949 11.0225 16.04C9.96762 14.9851 9.37499 13.5543 9.37499 12.0625C9.37725 10.8622 9.75869 9.69327 10.4648 8.72265L14.707 10.1406C14.8973 10.2032 15.1027 10.2032 15.293 10.1406L19.5351 8.72265C20.2413 9.69327 20.6227 10.8622 20.625 12.0625C20.625 13.5543 20.0324 14.9851 18.9775 16.04C17.9226 17.0949 16.4918 17.6875 15 17.6875Z" fill="#FDFDF5"/>
+                                </g>
+                                <defs>
+                                <filter id="filter0_d_1_197" x="-1.1889" y="0.815308" width="32.3766" height="31.4364" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                                <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                                <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                                <feOffset dy="4"/>
+                                <feGaussianBlur stdDeviation="2"/>
+                                <feComposite in2="hardAlpha" operator="out"/>
+                                <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0"/>
+                                <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1_197"/>
+                                <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1_197" result="shape"/>
+                                </filter>
+                                </defs>
+                            </svg>
+                        </a>
+                        {% if current_user.rol in ['tehnic', 'director'] %}
+                            <a href="{{url_for('results.inventory')}}" title="Inventar">
+                        {% else %}
+                            <a href="{{url_for('views.inventar')}}" title="Inventar">
+                        {% endif %}
+                            <svg id="inventorySVG" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M27 0H3C1.5 0 0 1.35 0 3V7.515C0 8.595 0.645 9.525 1.5 10.05V27C1.5 28.65 3.15 30 4.5 30H25.5C26.85 30 28.5 28.65 28.5 27V10.05C29.355 9.525 30 8.595 30 7.515V3C30 1.35 28.5 0 27 0ZM19.5 18H10.5V15H19.5V18ZM27 7.5H3V3L27 2.97V7.5Z" fill="white"/>
+                            </svg>
+                        </a>
+                        <a href="{{url_for('qread.qrscanner')}}" title="Scanare cod QR">
+                            <svg id="scanSVG" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g clip-path="url(#clip0_76_64)">
+                                <path d="M0 0.9375C0 0.68886 0.0987721 0.450403 0.274587 0.274587C0.450403 0.0987721 0.68886 0 0.9375 0L6.5625 0C6.81114 0 7.0496 0.0987721 7.22541 0.274587C7.40123 0.450403 7.5 0.68886 7.5 0.9375C7.5 1.18614 7.40123 1.4246 7.22541 1.60041C7.0496 1.77623 6.81114 1.875 6.5625 1.875H1.875V6.5625C1.875 6.81114 1.77623 7.0496 1.60041 7.22541C1.4246 7.40123 1.18614 7.5 0.9375 7.5C0.68886 7.5 0.450403 7.40123 0.274587 7.22541C0.0987721 7.0496 0 6.81114 0 6.5625V0.9375ZM22.5 0.9375C22.5 0.68886 22.5988 0.450403 22.7746 0.274587C22.9504 0.0987721 23.1889 0 23.4375 0L29.0625 0C29.3111 0 29.5496 0.0987721 29.7254 0.274587C29.9012 0.450403 30 0.68886 30 0.9375V6.5625C30 6.81114 29.9012 7.0496 29.7254 7.22541C29.5496 7.40123 29.3111 7.5 29.0625 7.5C28.8139 7.5 28.5754 7.40123 28.3996 7.22541C28.2238 7.0496 28.125 6.81114 28.125 6.5625V1.875H23.4375C23.1889 1.875 22.9504 1.77623 22.7746 1.60041C22.5988 1.4246 22.5 1.18614 22.5 0.9375ZM0.9375 22.5C1.18614 22.5 1.4246 22.5988 1.60041 22.7746C1.77623 22.9504 1.875 23.1889 1.875 23.4375V28.125H6.5625C6.81114 28.125 7.0496 28.2238 7.22541 28.3996C7.40123 28.5754 7.5 28.8139 7.5 29.0625C7.5 29.3111 7.40123 29.5496 7.22541 29.7254C7.0496 29.9012 6.81114 30 6.5625 30H0.9375C0.68886 30 0.450403 29.9012 0.274587 29.7254C0.0987721 29.5496 0 29.3111 0 29.0625V23.4375C0 23.1889 0.0987721 22.9504 0.274587 22.7746C0.450403 22.5988 0.68886 22.5 0.9375 22.5ZM29.0625 22.5C29.3111 22.5 29.5496 22.5988 29.7254 22.7746C29.9012 22.9504 30 23.1889 30 23.4375V29.0625C30 29.3111 29.9012 29.5496 29.7254 29.7254C29.5496 29.9012 29.3111 30 29.0625 30H23.4375C23.1889 30 22.9504 29.9012 22.7746 29.7254C22.5988 29.5496 22.5 29.3111 22.5 29.0625C22.5 28.8139 22.5988 28.5754 22.7746 28.3996C22.9504 28.2238 23.1889 28.125 23.4375 28.125H28.125V23.4375C28.125 23.1889 28.2238 22.9504 28.3996 22.7746C28.5754 22.5988 28.8139 22.5 29.0625 22.5ZM7.5 7.5H9.375V9.375H7.5V7.5Z" fill="white"/>
+                                <path d="M13.125 3.75H3.75V13.125H13.125V3.75ZM5.625 5.625H11.25V11.25H5.625V5.625ZM9.375 20.625H7.5V22.5H9.375V20.625Z" fill="white"/>
+                                <path d="M13.125 16.875H3.75V26.25H13.125V16.875ZM5.625 18.75H11.25V24.375H5.625V18.75ZM20.625 7.5H22.5V9.375H20.625V7.5Z" fill="white"/>
+                                <path d="M16.875 3.75H26.25V13.125H16.875V3.75ZM18.75 5.625V11.25H24.375V5.625H18.75ZM15 15V18.75H16.875V20.625H15V22.5H18.75V18.75H20.625V22.5H22.5V20.625H26.25V18.75H20.625V15H15ZM18.75 18.75H16.875V16.875H18.75V18.75ZM26.25 22.5H24.375V24.375H20.625V26.25H26.25V22.5ZM18.75 26.25V24.375H15V26.25H18.75Z" fill="white"/>
+                                <path d="M22.5 16.875H26.25V15H22.5V16.875Z" fill="white"/>
+                                </g>
+                                <defs>
+                                <clipPath id="clip0_76_64">
+                                <rect width="30" height="30" fill="white"/>
+                                </clipPath>
+                                </defs>
+                            </svg>
+                        </a>
+                        <a href="{{url_for('views.calendarGenerator')}}" title="Calendar">
+                            <svg id="calendarSVG" width="30" height="29" viewBox="0 0 30 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4.20389 0C2.91962 0 1.85329 1.06633 1.85329 2.3506V5.24274C1.45899 5.46095 1.09659 5.73941 0.805208 6.09708C0.127708 6.92795 -0.142654 8.02202 0.0722511 9.07326V9.0756C0.707126 12.1642 1.58969 16.4595 1.64554 16.732C1.58977 17.0039 0.710687 21.2808 0.0769196 24.3697C-0.139738 25.4261 0.132729 26.5248 0.812211 27.3598V27.3622C1.49349 28.1972 2.5159 28.6834 3.59465 28.6834H26.356C27.4461 28.6834 28.4795 28.192 29.1688 27.3482V27.3458C29.8571 26.5011 30.1323 25.3905 29.9134 24.323C29.2798 21.2359 28.4097 17.0028 28.3541 16.732C28.41 16.4594 29.2936 12.1577 29.9274 9.06859C30.1425 8.02003 29.8739 6.92566 29.1968 6.09475L29.1945 6.09241C28.9029 5.73503 28.5409 5.4579 28.1464 5.24041V2.3506C28.1464 1.06633 27.08 0 25.7958 0H4.20389ZM4.24357 2.39028H25.7561V4.78056H4.24357V2.39028ZM11.5405 12.0471C12.0902 12.0471 12.592 12.1129 13.0437 12.2455C13.4967 12.3782 13.8858 12.5755 14.2109 12.8384C14.5359 13.1014 14.789 13.4269 14.9695 13.8141C15.15 14.2014 15.2379 14.6507 15.2379 15.161C15.2379 15.3964 15.2035 15.6283 15.1306 15.8589C15.0576 16.0884 14.9506 16.3047 14.8084 16.5079C14.7511 16.5891 14.6653 16.6578 14.5983 16.7343H10.2986V18.394H11.4518C11.7266 18.394 11.9752 18.4252 12.1987 18.4873C12.421 18.5495 12.6106 18.6465 12.7659 18.7768C12.9213 18.907 13.0383 19.0754 13.1208 19.2833C13.2032 19.4913 13.2445 19.7387 13.2445 20.0279C13.2445 20.2526 13.2077 20.4567 13.1324 20.6395C13.0571 20.8224 12.9479 20.9784 12.8056 21.111C12.6634 21.2437 12.4895 21.3475 12.2851 21.4168C12.0795 21.4873 11.851 21.5219 11.5965 21.5219C11.3658 21.5219 11.1529 21.4873 10.9569 21.4168C10.7621 21.3463 10.5938 21.2505 10.4504 21.1274C10.3081 21.0043 10.1966 20.8582 10.1166 20.6885C10.0365 20.5188 9.99752 20.3315 9.99752 20.126H7.82899C7.82899 20.6662 7.93605 21.131 8.14878 21.5242C8.36152 21.9162 8.64133 22.2417 8.98912 22.5022C9.3369 22.7628 9.73147 22.9568 10.1773 23.0811C10.6218 23.2066 11.0779 23.2679 11.5428 23.2679C12.0926 23.2679 12.6031 23.1954 13.0764 23.0531C13.5485 22.9109 13.9588 22.7047 14.3042 22.4322C14.6496 22.1597 14.9193 21.8242 15.1165 21.4238C15.3137 21.0234 15.413 20.5686 15.413 20.0583C15.413 19.4583 15.2625 18.9388 14.9602 18.499C14.6578 18.0592 14.1984 17.7292 13.5829 17.5093C13.8483 17.3898 14.0823 17.2425 14.2879 17.0704C14.411 16.9665 14.4991 16.8478 14.6007 16.7343H20.0021V23.1185H22.1707V16.732H20.0021V14.7642L17.4135 15.5672V13.8048L21.9372 12.1825H22.1707V16.732H25.9148L25.9638 16.9724C25.9638 16.9724 26.916 21.6185 27.5698 24.8038C27.6439 25.1689 27.5528 25.5459 27.3177 25.8356C27.0795 26.1271 26.7312 26.2931 26.356 26.2931H3.59465C3.23206 26.2931 2.89503 26.1308 2.66561 25.8496C2.4379 25.5686 2.34577 25.2036 2.41818 24.8505C3.07195 21.6641 4.03582 16.9724 4.03582 16.9724L4.08484 16.732H10.2963H11.4144C11.8363 16.732 12.4108 16.561 12.6749 16.2861C12.939 16.0112 13.0717 15.6455 13.0717 15.1914C13.0717 14.9918 13.0428 14.8044 12.983 14.6311C12.9233 14.459 12.8295 14.3095 12.7076 14.1876C12.5845 14.0657 12.433 13.971 12.2477 13.9005C12.0625 13.83 11.8439 13.7955 11.5942 13.7955C11.3946 13.7955 11.2073 13.8221 11.0293 13.8795C10.8524 13.9369 10.6951 14.0194 10.5624 14.1246C10.4297 14.2298 10.325 14.358 10.2473 14.5097C10.1696 14.6627 10.1329 14.8333 10.1329 15.0233H7.96438C7.96438 14.5727 8.05685 14.1647 8.24449 13.7978C8.43213 13.4309 8.68744 13.1187 9.01013 12.8618C9.33281 12.6036 9.71188 12.4041 10.1469 12.2619C10.5819 12.1196 11.0457 12.0471 11.5405 12.0471Z" fill="#FDFDF5"/>
+                            </svg>
+                        </a>
+                        <a href="#" title="Fisiere">
+                            <svg id="fileSVG" width="21" height="26" viewBox="0 0 21 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M13.4756 0.5126H3.47559C2.10059 0.5126 0.988086 1.6376 0.988086 3.0126L0.975586 23.0126C0.975586 24.3876 2.08809 25.5126 3.46309 25.5126H18.4756C19.8506 25.5126 20.9756 24.3876 20.9756 23.0126V8.0126L13.4756 0.5126ZM3.47559 23.0126V3.0126H12.2256V9.2626H18.4756V23.0126H3.47559Z" fill="white"/>
+                            </svg>
+                        </a>
+                        <a href='#' title="Adaugare Fisier Excel" id="openExcelModal">
+                            <svg id="excelSVG" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 0C11.8654 0.000816118 11.7313 0.015212 11.5996 0.0429688L11.5977 0.0410156L1.62891 2.03516L1.62695 2.03711C1.16976 2.12391 0.757141 2.36743 0.460171 2.72572C0.163201 3.084 0.000467831 3.53464 0 4V20C9.94457e-05 20.466 0.162903 20.9173 0.4603 21.276C0.757698 21.6348 1.17102 21.8784 1.62891 21.9648L11.5977 23.959C11.73 23.9862 11.8648 24 12 24C12.5304 24 13.0391 23.7893 13.4142 23.4142C13.7893 23.0391 14 22.5304 14 22V2C14 1.46957 13.7893 0.960859 13.4142 0.585786C13.0391 0.210714 12.5304 0 12 0ZM16 2V5H18V7H16V9H18V11H16V13H18V15H16V17H18V19H16V22H22C23.105 22 24 21.105 24 20V4C24 2.895 23.105 2 22 2H16ZM20 5H21C21.552 5 22 5.448 22 6C22 6.552 21.552 7 21 7H20V5ZM3.18555 7H5.58789L6.83203 9.99023C6.93303 10.2342 7.0138 10.5169 7.0918 10.8379H7.125C7.17 10.6449 7.25853 10.3518 7.39453 9.9668L8.78516 7H10.9727L8.35938 11.9551L11.0508 16.998H8.7168L7.21289 13.7402C7.15589 13.6252 7.0892 13.3933 7.0332 13.0723H7.01172C6.97772 13.2263 6.91059 13.4586 6.80859 13.7676L5.29492 17H2.94922L5.73242 11.9941L3.18555 7ZM20 9H21C21.552 9 22 9.448 22 10C22 10.552 21.552 11 21 11H20V9ZM20 13H21C21.552 13 22 13.448 22 14C22 14.552 21.552 15 21 15H20V13ZM20 17H21C21.552 17 22 17.448 22 18C22 18.552 21.552 19 21 19H20V17Z" fill="#E7E7E7"/>
+                            </svg>
+                        </a>
+                        <div class="logoutSection">
+                            <a href="{{url_for('auth.logout')}}" title="Logout">
+                                <svg width="24" height="22" viewBox="0 0 24 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 4.8L16.308 6.492L19.404 9.6H7.2V12H19.404L16.308 15.096L18 16.8L24 10.8L18 4.8ZM2.4 2.4H12V0H2.4C1.08 0 0 1.08 0 2.4V19.2C0 20.52 1.08 21.6 2.4 21.6H12V19.2H2.4V2.4Z" fill="white"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+      </div>
+      <div class="centerBase">
+        <div class="content">{% block content %} {% endblock %}</div>
+      </div>
+      <div class="rightBase">
+        <div class="user-area">
+            <div class="user-box" id="user-box">
+                <div class="userDetails">
+                    <div class="userImg">
+                        <img src="{{url_for('static', filename='images/svg_website/person.svg')}}" alt="User Icon">
+                    </div>
+                    <div class="userName">
+                        {{current_user.nume + ' ' + current_user.prenume}}
+                    </div>
+                </div>
+                <div class="down-arrow">
+                    <img src="{{url_for('static', filename='images/svg_website/down-arrow.svg')}}" alt="Arrow Icon">
+                </div>
+            </div>
+            <div class="user-drop" id="user-drop">
+                <a href="{{url_for('import.change', user_id=current_user.id)}}">Editare Profil</a>
+                <a href="{{url_for('views.confirmEmail')}}">Resetare parola</a>
+                <a href="{{url_for('views.reset_user')}}">Resetare username</a>
+
+                <div class="separateLink">
+                    <a href="{{url_for('auth.logout')}}">Logout</a>
+                </div>
+
+            </div>
+        </div>
+        <div class="moreSection" id="moreSection">
+            <div class="usersForm">
+                <div class="Details" id="events">
+                    <div class="allEventsLink">
+                        <a href="{{url_for('views.calendarGenerator')}}">view all</a>
+                    </div>
+                    <div class="formTitle">Evenimente viitoare</div>
+                    <div class="eventsBtns">
+                        <button type="button" id="allEvents">All</button>
+                        <button type="button" id="todayEvents">Today</button>
+                        <button type="button" id="WeekEvents">Weekly</button>
+                        <button type="button" id="MonthEvens">Monthly</button>
+                    </div>
+                    <div class="eventsContainer">
+                        {% for event in events %}
+                            <div class="event">
+                                {% if event.start_time %}
+                                    <div class="eventDay"> 
+                                        <div class="dayText">{{ event.weekDayStart }}</div>
+                                        <div class="dayTime">{{ event.start_time }} - {{ event.end_time }}</div></div>
+                                {% else %}
+                                    <div class="eventDay"> {{ event.weekDayStart }}</div>
+                                {% endif %}
+                                <div class="eventTitle"> {{ event.title }} </div>
+                                <div class="eventTime"> {{ event.start }} </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                    <div class="Details" id="studentDetails">
+                        <div class="formTitle">
+                            Detalii Elev
+                        </div>
+                        <div class="formContent">
+                            <div class="userDetail">
+                                <div class="formLabel formId">REF ID</div>
+                                <div class="formResult userID"></div>
+                            </div>
+                            <div class="userDetail">
+                                <div class="formLabel">NUME</div>
+                                <div class="formResult userNume"></div>
+                            </div>
+                            <div class="userDetail">
+                                <div class="formLabel">PRENUME</div>
+                                <div class="formResult userSndName"></div>
+                            </div>
+                            <div class="userDetail">
+                                <div class="formLabel">CLASA</div>
+                                <div class="formResult userClass"></div>
+                            </div>
+                            <div class="userDetail">
+                                <div class="formLabel">TELEFON</div>
+                                <div class="formResult userPhone"></div>
+                            </div>
+                            <div class="userDetail">
+                                <div class="formLabel">EMAIL</div>
+                                <div class="formResult userEmail"></div>
+                            </div>
+                            <div class="userDetail">
+                                <div class="formLabel">ADRESA</div>
+                                <div class="formResult userAddress"></div>
+                            </div>
+                            <div class="userDetail">
+                                <div class="formLabel">CREAT IN</div>
+                                <div class="formResult userCreate"></div>
+                            </div>
+                            <div class="formLinks">
+                                <a href="#">Resetare parolă</a>
+                            </div>
+                            <div class="formButtons">
+                                <button type="button" id="editBtn" class="editBtn">EDIT</button>
+                                <button type="button" id="deleteBtn" class="deleteBtn">DELETE</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="Details" id="otherDetails">
+                        <div class="formTitle">
+                            Detalii Personal
+                        </div>
+                        <div class="formContent">
+                            <div class="userDetail">
+                                <div class="formLabel formId">REF ID</div>
+                                <div class="formResult userID"></div>
+                            </div>
+                            <div class="userDetail">
+                                <div class="formLabel">NUME</div>
+                                <div class="formResult userNume"></div>
+                            </div>
+                            <div class="userDetail">
+                                <div class="formLabel">PRENUME</div>
+                                <div class="formResult userSndName"></div>
+                            </div>
+                            <div class="userDetail">
+                                <div class="formLabel">ROL</div>
+                                <div class="formResult userRole"></div>
+                            </div>
+                            <div class="userDetail">
+                                <div class="formLabel">CALIFICARE</div>
+                                <div class="formResult userCalif"></div>
+                            </div>
+                            <div class="userDetail">
+                                <div class="formLabel">TELEFON</div>
+                                <div class="formResult userPhone"></div>
+                            </div>
+                            <div class="userDetail">
+                                <div class="formLabel">EMAIL</div>
+                                <div class="formResult userEmail"></div>
+                            </div>
+                            <div class="userDetail">
+                                <div class="formLabel">ADRESA</div>
+                                <div class="formResult userAddress"></div>
+                            </div>
+                            <div class="userDetail">
+                                <div class="formLabel">CREAT IN</div>
+                                <div class="formResult userCreate"></div>
+                            </div>
+                            <div class="formLinks">
+                                <a href="#">Resetare parolă</a>
+                            </div>
+                            <div class="formButtons">
+                                <button type="button" id="editBtn" class="editBtn">EDIT</button>
+                                <button type="button" id="deleteBtn" class="deleteBtn">DELETE</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="Details" id="inventar">
+                        <div class="formTitle">
+                            Detalii Obiect de Inventar
+                        </div>
+                        <div class="formContent">
+                            <div class="userDetail">
+                                <div class="formLabel formId">REF ID</div>
+                                <div class="formResult invID"></div>
+                            </div>
+                            <div class="userDetail">
+                                <div class="formLabel">NUME</div>
+                                <div class="formResult invNume"></div>
+                            </div>
+                            <div class="userDetail">
+                                <div class="formLabel">DETINATOR</div>
+                                <div class="formResult detinatorName"></div>
+                            </div>
+                            <div class="userDetail">
+                                <div class="formLabel">CANTITATE</div>
+                                <div class="formResult invCant"></div>
+                            </div>
+                            <div class="userDetail">
+                                <div class="formLabel">PRET/BUC</div>
+                                <div class="formResult invPrice"></div>
+                            </div>
+                            <div class="userDetail">
+                                <div class="formLabel">VALOARE TOTALA</div>
+                                <div class="formResult invtotal"></div>
+                            </div>
+                            <div class="formLinks">
+                                <a href="#" id="downloadQRLink">Descarca cod QR</a>
+                                <a href="{{url_for('import.inventarTransfer')}}">Transfer Obiect Inventar</a>
+                            </div>
+                            <div class="formButtons">
+                                <button type="button" id="editInvBtn" class="editBtn">EDIT</button>
+                                <button type="button" id="deleteInvBtn" class="deleteBtn">DELETE</button>
+                            </div>
+                        </div>
+                    </div>
+            </div> 
+        </div>
+      </div>
+      
+  </div>
+
+
+  <script>
+    $(document).ready(function() {
+        if($(".content").css('overflow-y') == 'scroll') {
+            $(".content").css('padding-right', 0);
+        }
+        $("#allEvents").addClass('eventActive');
+
+        $("#events button").on('click', function() {
+            $("#events button").removeClass('eventActive');
+            $(this).addClass('eventActive');
+        });
+
+        var borderColors = ['#F6AD2B', '#4DC152', '#F62B2B', '#233255']
+        var backgroundColors = ['rgba(246, 173, 43, .4)', 'rgba(77, 193, 82, .4)', 'rgba(246, 43, 43, .4)', 'rgba(35, 50, 85, .4)']
+        
+        $(".event").each(function(index) {
+            var backcolorIndex = index % backgroundColors.length;
+            var color = backgroundColors[backcolorIndex];
+
+            var borderIndex = index % borderColors.length;
+            var border_color = borderColors[borderIndex];
+
+            $(this).css({
+                'border-left': `4px solid ${border_color}`,
+                'background': `linear-gradient(to right, ${color}, transparent)`
+            });
+        });
+        var newsCount = localStorage.getItem('newsCount');
+        if (newsCount > 0) {
+            $('#newsIcon .btnCount').css('display', 'flex');
+            $('#newsIcon .btnCount').html(newsCount)
+        }
+        $("#openExcelModal").on('click', function(event){
+            event.preventDefault();
+
+            $("#uploadExcel").modal('show');
+        });
+
+        $("#events").css('display', 'block');
+        var currentLink = window.location.href;
+    
+        if (currentLink.includes('admin')) {
+            $("#dashboardSVG path").css('fill', '#FFBF4D');
+        } else if(currentLink.includes('allUsers') || currentLink.includes('staff')) {
+            $("#allUsersSVG path").css('fill', '#FFBF4D');
+        } else if(currentLink.includes('students')) {
+            $("#studentSVG path").css('fill', '#FFBF4D');
+        } else if(currentLink.includes('inventar') || currentLink.includes('inventory')){
+            $("#inventorySVG path").css('fill', '#FFBF4D');
+        } else if(currentLink.includes('scan')) {
+            $("#scanSVG path").css('fill', '#FFBF4D');
+        } else if(currentLink.includes('calendar')) {
+            $("#calendarSVG path").css('fill', '#FFBF4D');
+        } else if(currentLink.includes('news/accept')) {
+            $("#newsSVG path").css('fill', '#FFBF4D');
+        } else if(currentLink.includes('files')) {
+            $("#fileSVG path").css('fill', '#FFBF4D');
+        }
+    });
+    var user_box = document.getElementById("user-box");
+    var user_details = document.getElementById("user-drop");
+    user_details.style.display = 'none';
+
+    user_box.addEventListener('click', function(event) {
+        var buttonWidth = $(this).outerWidth();
+        $("#user-drop").css('width', buttonWidth);
+
+        if(user_details.style.display == 'none'){
+            user_details.style.display = 'flex';
+        } else {
+            user_details.style.display = 'none';
+        }
+        event.stopPropagation();
+    });
+
+    $(document).on('click', function(event) {
+        if (!$(event.target).closest("#user-box").length) {
+            $("#user-drop").css('display', 'none');
+        }
+    });
+  </script>
+  
+
+  <!-- hide alert bar -->
+  <script>
+    setTimeout(function () {
+      $(".alert").slideUp(500, function () {
+        $(this).remove();
+      });
+    }, 2300);
+  </script>
+
+  <!-- redirect to home page -->
+  <script>
+    function getUserRole() {
+      return "{{ current_user.rol }}";
+    }
+
+    function getUserCalificare() {
+      return "{{ current_user.calificare}}";
+    }
+
+    function redirectHomePage() {
+      var user_role = getUserRole();
+      var user_calif = getUserCalificare();
+
+      var homePageURL;
+      switch (user_role) {
+        case "admin":
+          homePageURL = "{{url_for('views.admin')}}";
+          break;
+        case "director":
+          homePageURL = "{{url_for('views.director')}}";
+          break;
+        case "profesor":
+          homePageURL = '{{url_for("views.teacher")}}';
+          break;
+        case "elev":
+          homePageURL = '{{url_for("views.student")}}';
+          break;
+        case "tehnic":
+          if (user_calif == "informatician") {
+            homePageURL = '{{url_for("views.admin")}}';
+          } else {
+            <!--TODO change to 'views.tehnic after create the route'-->
+            homePageURL = "/tehnic";
+          }
+          break;
+        default:
+          homePageURL = "/";
+          break;
+      }
+      window.location.href = homePageURL;
+    }
+
+    var redirectLink = document.getElementById("homeLink");
+    redirectLink.addEventListener("click", function () {
+      event.preventDefault();
+      redirectHomePage();
+    });
+  </script>
+  <!-- Modal -->
+  <div class="modal fade" id="uploadExcel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Upload EXCEL file</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="{{ url_for('import.upload') }}" method="post" enctype="multipart/form-data">
+            <div class="mb-3 import">
+              <label for="formFile" class="form-label">Import EXCEL file</label>
+              <input class="form-control" type="file" id="formFile" accept=".xlsx" name="fileInput" required>
+              <button type="submit" class="btn btn-primary csv-btn">Add CSV</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

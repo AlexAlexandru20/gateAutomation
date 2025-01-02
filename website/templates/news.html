@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% block title %}
+    Noutati
+{% endblock %}
+{% block content %}
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="news-tab" data-bs-toggle="tab" data-bs-target="#news-tab-pane" type="button" role="tab" aria-controls="news-tab-pane" aria-selected="true">
+                <div class="btnText">Actualizări</div>
+                <div class="btnCount"></div>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="consent-tab" data-bs-toggle="tab" data-bs-target="#consent-tab-pane" type="button" role="tab" aria-controls="consent-tab-pane" aria-selected="true">
+                <div class="btnText">Aprobări</div>
+                <div class="btnCount"></div>
+            </button>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="news-tab-pane" role="tabpanel" aria-labelledby="news-tab" tabindex="0">
+            <ul id="news">
+                {% if noutati %}
+                    {% for noutate in noutati %}
+                        {% if noutate.type == 'waiting' %}
+                            {% set action = 'În așteptare' %}
+                        {% elif noutate.type == 'accept' %}
+                            {% set action = 'Acceptat' %}
+                        {% else %}
+                            {% set action = 'Refuzat' %}
+                        {% endif %}
+                        <div class="align">
+                            <li class="newsLI">
+                                <div class="top">{{ noutate.time.strftime('%H:%M') }}: </b>{{noutate.title}} </div>
+                                <div class="bottom"> {{action}}</div>
+                            </li>
+                            <button type="button" class="btn-close" aria-label="Close" id="{{noutate.id}}-close"></button>
+                        </div>
+                        <script>
+                            $(document).ready(function(){
+                                $("#{{noutate.id}}-close").on('click', function(){
+                                    $.ajax({
+                                        url: "{{url_for('news.deleteNews')}}",
+                                        method: 'POST',
+                                        contentType: 'application/json;charset=UTF-8',
+                                        data: JSON.stringify({response: 'close', id: '{{noutate.id}}'}),
+                                        success: function(){
+                                            location.reload();
+                                        },
+                                        error: function(error){
+                                            console.error('Error: ', error);
+                                        }
+                                    });
+                                });
+                            });
+                        </script>
+                    {% endfor %}
+                {% endif %}
+            </ul>
+        </div>
+        <script>
+            $(document).ready(function() {
+                var newsCount = $("#news li").length;
+                if (newsCount > 0) {
+                    $("#news-tab .btnCount").css('display', 'flex');
+                    $("#news-tab .btnCount").html(newsCount);
+                }
+                var requestsCount = $("#actions li").length;
+                if (requestsCount > 0) {
+                    $("#consent-tab .btnCount").css('display', 'flex');
+                    $("#consent-tab .btnCount").html(newsCount);
+                }
+
+                localStorage.setItem('newsCount', newsCount + requestsCount);
+            });
+        </script>
+        <div class="tab-pane fade" id="consent-tab-pane" role="tabpanel" aria-labelledby="consent-tab" tabindex="0">
+            <ul id="actions">
+                {% if requests %}
+                    {% for request in requests %}
+                        <div class="align">
+                            <li id="{{request.uniqueid}}-openDetails"><b>{{ request.time.strftime('%H:%M') }}:</b> {{request.title}} - {{request.name}}</li>
+                            <img src="{{url_for('static', filename='images/svg_website/accept.png')}}" alt="Accept Icon" class="icon accept" id="{{request.uniqueid}}-accept">
+                            <img src="{{url_for('static', filename='images/svg_website/deny.png')}}" alt="Deny Icon" class="icon deny" id="{{request.uniqueid}}-deny">
+                        </div>
+                        
+                        <!-- Modal -->
+                        <div class="modal fade" id="{{request.uniqueid}}-details" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="staticBackdropLabel">{{request.title}} - {{request.name}}</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Se doreste transferul <b>{{request.name}}</b>, de la <b>{{user_sender[loop.index0]}}</b> la <b>{{user_receiver[loop.index0]}}</b>, cu o cantitate de <b>{{request.cant}}</b> bucăți.<br>
+                                    Sunteti de acord?
+                                </div>
+                                <div class="modal-footer">
+                                <button type="button" class="btn">
+                                    <img src="{{url_for('static', filename='images/svg_website/accept.png')}}" alt="Accept Icon" class="icon accept" id="{{request.uniqueid}}-modal-accept">
+                                </button>
+                                <button type="button" class="btn">
+                                    <img src="{{url_for('static', filename='images/svg_website/deny.png')}}" alt="Deny Icon" class="icon deny" id="{{request.uniqueid}}-modal-deny">
+                                </button>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        
+                        <script>
+                            $(document).ready(function () {
+                                $("#{{request.uniqueid}}-openDetails").on('click', function () {
+                                    $("#{{request.uniqueid}}-details").modal("show");
+                                });
+                                $("#{{request.uniqueid}}-accept").on("click", function () {
+                                    $.ajax({
+                                        {% if current_user.calificare == 'director' %}
+                                            url: "{{url_for('news.responseDirector')}}",
+                                        {% else %}
+                                            url: "{{url_for('news.responseUser')}}",
+                                        {% endif %}
+                                        method: 'POST',
+                                        contentType: 'application/json;charset=UTF-8',
+                                        data: JSON.stringify({ response: 'accept', uniqueid: '{{request.uniqueid}}' }),
+                                        success: function () {
+                                            location.reload();
+                                        },
+                                        error: function (error) {
+                                            console.error('Error', error);
+                                        }
+                                    });
+                                });
+                                $("#{{request.uniqueid}}-modal-accept").on("click", function () {
+                                    $.ajax({
+                                        {% if current_user.calificare == 'director' %}
+                                            url: "{{url_for('news.responseDirector')}}",
+                                        {% else %}
+                                            url: "{{url_for('news.responseUser')}}",
+                                        {% endif %}
+                                        method: 'POST',
+                                        contentType: 'application/json;charset=UTF-8',
+                                        data: JSON.stringify({ response: 'accept', uniqueid: '{{request.uniqueid}}' }),
+                                        success: function () {
+                                            location.reload();
+                                        },
+                                        error: function (error) {
+                                            console.error('Error', error);
+                                        }
+                                    });
+                                });
+                                $("#{{request.uniqueid}}-deny").on("click", function () {
+                                    $.ajax({
+                                        url: "{{url_for('news.responseUser')}}",
+                                        method: "POST",
+                                        contentType: 'application/json;charset=UTF-8',
+                                        data: JSON.stringify({ response: 'deny', uniqueid: '{{request.uniqueid}}' }),
+                                        success: function () {
+                                            location.reload();
+                                        },
+                                        error: function (error) {
+                                            console.error('Error: ', error);
+                                        }
+                                    });
+                                });
+                                $("#{{request.uniqueid}}-modal-deny").on("click", function () {
+                                    $.ajax({
+                                        url: "{{url_for('news.responseUser')}}",
+                                        method: "POST",
+                                        contentType: 'application/json;charset=UTF-8',
+                                        data: JSON.stringify({ response: 'deny', uniqueid: '{{request.uniqueid}}' }),
+                                        success: function () {
+                                            location.reload();
+                                        },
+                                        error: function (error) {
+                                            console.error('Error: ', error);
+                                        }
+                                    });
+                                });
+                            });
+                        </script>
+                    {% endfor %}
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}

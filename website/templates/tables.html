@@ -1,0 +1,865 @@
+{% extends 'base.html' %}
+{% block title %}
+    Tabel
+{% endblock %}
+{% block content %}
+    <div id="allUsers">
+        <div class="userHead">
+            <div class="headBtns">
+                    <button type="button" class="printBtn" id="printBtn" style="margin-right: 2.5%;">PRINT</button>
+                    <div class="exportContainer">
+                        <button type="button" class="exportBtn" id="exportBtn">
+                            <div class="btnText">
+                                EXPORT
+                            </div>
+                            <div class="arrow">
+                                <img src="{{url_for('static', filename='images/svg_website/down-arrow.svg')}}" alt="Down arrow">
+                            </div>
+                        </button>
+                        <div id="exportDropDown">
+                            <a href="#" class="expRow" id="pdfBtn">PDF</a>
+                            <a href="#" class="expRow" id="docxBtn">DOCX</a>
+                            <a href="#" class="expRow" id="csvBtn">CSV</a>
+                            <a href="#" class="expRow" id="xlsxBtn">XLSX</a>
+                        </div>
+                    </div>
+                    <button type="button" class="createBtn" id="createBtn" style="margin: 0 2.5%;">CREARE USER</button>
+            </div>
+            <div class="headFilters">
+                        <div class="search-bar tableSearch">
+                            <img src="{{url_for('static', filename='images/svg_website/searchIcon.svg')}}" alt="Search Icon" class="searchIcon">
+                            <input type="text" placeholder="Search..." id="userSearch">
+                        </div>
+                    <div class="rolContainer">
+                        <button type="button" class="rolBtn" id="rolBtn">
+                            <div class="btnText">
+                                Rol
+                            </div>
+                            <div class="arrow">
+                                <img src="{{url_for('static', filename='images/svg_website/down-arrow.svg')}}" alt="Down arrow">
+                            </div>
+                        </button>
+                        <div class="rolDropDown" id="rolDropDown">
+                            <a href="#" class="rolRow" id="allBtn">All</a>
+                            <a href="#" class="rolRow" id="directorBtn">Director</a>
+                            <a href="#" class="rolRow" id="tehnicBtn">Tehnic</a>
+                            <a href="#" class="rolRow" id="profesorBtn">Profesor</a>
+                            <a href="#" class="rolRow" id="elevBtn">Elev</a>
+                        </div>
+                    </div>
+                    <div class="sortContainer" style="margin-left: 1dvw;">
+                        <button type="button" class="rolBtn" id="sortBtn">
+                            <div class="btnText">
+                                Sortare
+                            </div>
+                            <div class="arrow">
+                                <img src="{{url_for('static', filename='images/svg_website/down-arrow.svg')}}" alt="Down arrow">
+                            </div>
+                        </button>
+                        <div class="sortDropDown" id="sortDropDown">
+                            <a href="" class="rolRow" id="idAsc">ID(a-z)</a>
+                            <a href="" class="rolRow" id="idDesc">ID(z-a)</a>
+                            <a href="" class="rolRow" id="numeAsc">Nume(a-z)</a>
+                            <a href="" class="rolRow" id="numeDesc">Nume(z-a)</a>
+                        </div>
+                    </div>
+                    <button type="button" id="delBtn">Delete</button>
+            </div>
+        </div>
+        <div class="lenResults">
+            <div class="lenText">
+                <span id="resultNum"></span> rezultate
+            </div>
+        </div>
+        <table id="userTable">
+            <thead>
+                <tr>
+                    <th class="selectAll">
+                        <input type="checkbox" id="selectAll">
+                    </th>
+                    <th class="rowDisplay id" style="margin-left: 0;">
+                        <div class="thBorder"></div>
+                        <div class="thTitle">REF ID</div>
+                    </th>
+                    <th class="rowDisplay name">
+                        <div class="thBorder"></div>
+                        <div class="thTitle">NUME</div>
+                    </th>
+                    <th class="rowDisplay sndName">
+                        <div class="thBorder"></div>
+                        <div class="thTitle">PRENUME</div>
+                    </th>
+                    <th class="rowDisplay role">
+                        <div class="thBorder"></div>
+                        <div class="thTitle">ROL</div>
+                    </th>
+                    <th class="rowDisplay depart">
+                        <div class="thBorder"></div>
+                        <div class="thTitle">DEPARTAMENT</div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if users %}
+                    {% for user in users %}
+                        <tr data-user-id={{user.id}} data-role="{{user.rol}}" class="selectable">
+                            <td class="selectAll">
+                                <input type="checkbox" class="selectAllCheckbox">
+                            </td>
+                            <td class="id">{{user.id}}</td>
+                            <td class="name">{{user.nume}}</td>
+                            <td class="sndName">{{user.prenume}}</td>
+                            <td class="role">{{user.rol}}</td>
+                            <td class="depart" style="margin-right: 0;">{{user.calificare}}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr class="noResult">
+                        <td>Nu exista Useri. Puteti adauga <a href="{{url_for('import.add_user')}}"> aici</a>.</td>
+                    </tr>
+                {% endif %}
+                
+            </tbody>
+        </table>
+    </div>
+    <div id="inventory">
+        <div class="userHead">
+            <div class="headBtns">
+                <button type="button" id="downloadQRBtn" style="margin-right: 2.5%;">ALL QR CODES</button>
+                    <button type="button" id="printBtnInv" style="margin-right: 2.5%;">PRINT</button>
+                    <div class="exportContainer">
+                        <button type="button" class="exportBtn" id="exportBtnInv">
+                            <div class="btnText">
+                                EXPORT
+                            </div>
+                            <div class="arrow">
+                                <img src="{{url_for('static', filename='images/svg_website/down-arrow.svg')}}" alt="Down arrow">
+                            </div>
+                        </button>
+                        <div id="exportDropDownInv">
+                            <a href="#" class="expRow" id="pdfBtnInv">PDF</a>
+                            <a href="#" class="expRow" id="docxBtnInv">DOCX</a>
+                            <a href="#" class="expRow" id="csvBtnInv">CSV</a>
+                            <a href="#" class="expRow" id="xlsxBtnInv">XLSX</a>
+                        </div>
+                    </div>
+                    <button type="button" id="createBtnInv" style="margin: 0 2.5%;">CREARE INVENTAR</button>
+            </div>
+            <div class="headFilters">
+                    <div class="search-bar tableSearch">
+                        <img src="{{url_for('static', filename='images/svg_website/searchIcon.svg')}}" alt="Search Icon" class="searchIcon">
+                        <input type="text" placeholder="Search..." id="userSearchInv">
+                    </div>
+                    <div class="sortContainer" style="margin-left: 1dvw;">
+                        <button type="button" class="rolBtn" id="sortBtnInv">
+                            <div class="btnText">
+                                Sortare
+                            </div>
+                            <div class="arrow">
+                                <img src="{{url_for('static', filename='images/svg_website/down-arrow.svg')}}" alt="Down arrow">
+                            </div>
+                        </button>
+                        <div class="sortDropDown" id="sortDropDownInv">
+                            <a href="" class="rolRow" id="numeAscInv">Denumire(a-z)</a>
+                            <a href="" class="rolRow" id="numeDescInv">Denumire(z-a)</a>
+                            <a href="" class="rolRow" id="userAscInv">Detinator(a-z)</a>
+                            <a href="" class="rolRow" id="userDescInv">Detinator(z-a)</a>
+                        </div>
+                    </div>
+                    <button type="button" id="downloadQR" class="transferBtn">Descarca coduri QR</button>
+                    <button type="button" id="delBtnInv">Delete</button>
+            </div>
+        </div>
+        <div class="lenResults">
+            <div class="lenText">
+                <span id="invResultNum"></span> rezultate
+            </div>
+        </div>
+        <table id="invTable">
+            <thead>
+                <tr>
+                    <th class="selectAll">
+                        <input type="checkbox" id="selectAllInv">
+                    </th>
+                    <th class="rowDisplay id" style="margin-left: 0;">
+                        <div class="thBorder"></div>
+                        <div class="thTitle">REF ID</div>
+                    </th>
+                    <th class="rowDisplay name">
+                        <div class="thBorder"></div>
+                        <div class="thTitle">DENUMIRE</div>
+                    </th>
+                    <th class="rowDisplay sndName">
+                        <div class="thBorder"></div>
+                        <div class="thTitle">DETINATOR</div>
+                    </th>
+                    <th class="rowDisplay role">
+                        <div class="thBorder"></div>
+                        <div class="thTitle">CANTITATE</div>
+                    </th>
+                    <th class="rowDisplay depart">
+                        <div class="thBorder"></div>
+                        <div class="thTitle">COD QR</div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if inventar %}
+                    {% for inv in inventar %}
+                        <tr data-inv-id={{inv.id}} class="selectable">
+                            <td class="selectAll">
+                                <input type="checkbox" class="selectAllCheckbox">
+                            </td>
+                            <td class="id">{{inv.id}}</td>
+                            <td class="name"><b>{{inv.nume}}</b></td>
+                            <td class="sndName">{{inv.user}}</td>
+                            <td class="role">{{inv.cant}}</td>
+                            <td class="depart" style="margin-right: 0;">
+                                <a href="{{ url_for('static', filename='images/qrcodes/{}.png'.format(inv.id)) }}"
+                                    download="qrcode.png">
+                                    <img src="{{ url_for('static', filename='images/qrcodes/{}.png'.format(inv.id)) }}"
+                                        alt="QRCode" class="qrcode">
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr class="noResult">
+                        <td>Nu exista obiecte de inventar. Puteti adauga <a href="{{url_for('import.add_inventar')}}"> aici</a>.</td>
+                    </tr>
+                {% endif %}
+                
+            </tbody>
+        </table>
+    </div>
+    <script>
+        $(document).ready(function() {
+            if ($("tbody tr:visible").length < 1) {
+                $("tbody tr td").html('Nu exista obiecte de inventar. Puteti adauga <a href="{{url_for("import.add_inventar")}}">aici</a>.');
+            }
+            $("#allUsers").css('display', 'none');
+            $("#inventory").css('display', 'none');
+
+            currentURL = window.location.href
+
+
+            if(currentURL.includes('allUsers') || currentURL.includes('staff')) {
+                $("#allUsers").css('display', 'flex');
+            } else if(currentURL.includes('students')) {
+                $("#allUsers").css('display', 'flex');
+                $("#rolBtn .btnText").html('Elev');
+                $("#rolBtn").prop('disabled', true);
+            } else if (currentURL.includes('inventory')){
+                $("#inventory").css('display', 'flex');
+            }
+
+
+            //Delete Multiple
+            $("#delBtn").css('display', 'none');
+            $("#delBtnInv").css('display', 'none');
+
+            var visibleRows = $("#userTable tbody tr:visible").length;
+            $("#resultNum").html(visibleRows);
+
+            var visibleRowsInv = $("#invTable tbody tr:visible").length;
+            $("#invResultNum").html(visibleRowsInv);
+
+            //User Table
+            $("#exportBtn").on('click', function() {
+                var buttonWidth = $(this).outerWidth();
+                $("#exportDropDown").css('width', buttonWidth);
+        
+                if ($("#exportDropDown").css('display') === 'flex') {
+                    $("#exportDropDown").css('display', 'none');
+                } else {
+                    $("#exportDropDown").css('display', 'flex');
+                }
+        
+                // Prevent the click event from propagating to the document
+                event.stopPropagation();
+            });
+            //Inventory table
+            $("#exportBtnInv").on('click', function() {
+                var buttonWidth = $(this).outerWidth();
+                $("#exportDropDownInv").css('width', buttonWidth);
+        
+                if ($("#exportDropDownInv").css('display') === 'flex') {
+                    $("#exportDropDownInv").css('display', 'none');
+                } else {
+                    $("#exportDropDownInv").css('display', 'flex');
+                }
+        
+                // Prevent the click event from propagating to the document
+                event.stopPropagation();
+            });
+            $("#rolBtn").on('click', function(event) {
+                var buttonWidth = $(this).outerWidth();
+                $("#rolDropDown").css('width', buttonWidth);
+        
+                if ($("#rolDropDown").css('display') === 'flex') {
+                    $("#rolDropDown").css('display', 'none');
+                } else {
+                    $("#rolDropDown").css('display', 'flex');
+                }
+        
+                // Prevent the click event from propagating to the document
+                event.stopPropagation();
+            });
+            $("#sortBtn").on('click', function(event) {
+                var buttonWidth = $(this).outerWidth();
+                $("#sortDropDown").css('width', buttonWidth);
+        
+                if ($("#sortDropDown").css('display') === 'flex') {
+                    $("#sortDropDown").css('display', 'none');
+                } else {
+                    $("#sortDropDown").css('display', 'flex');
+                }
+        
+                // Prevent the click event from propagating to the document
+                event.stopPropagation();
+            });
+            $("#sortBtnInv").on('click', function(event) {
+                var buttonWidth = $(this).outerWidth();
+                $("#sortDropDownInv").css('width', buttonWidth);
+        
+                if ($("#sortDropDownInv").css('display') === 'flex') {
+                    $("#sortDropDownInv").css('display', 'none');
+                } else {
+                    $("#sortDropDownInv").css('display', 'flex');
+                }
+        
+                // Prevent the click event from propagating to the document
+                event.stopPropagation();
+            });
+            //User Table
+            $("#idAsc").on('click', function(event) {
+                event.preventDefault();
+                sortTable("userTable", 1, true);
+            });
+            $("#idDesc").on('click', function(event) {
+                event.preventDefault();
+                sortTable("userTable", 1, false);
+            });
+            $("#numeAsc").on('click', function(event) {
+                event.preventDefault();
+                sortTable("userTable", 2, true);
+            });
+            $("#numeDesc").on('click', function(event) {
+                event.preventDefault();
+                sortTable("userTable", 2, false);
+            });
+            //Inventar Table
+            $("#numeAscInv").on('click', function(event) {
+                event.preventDefault();
+                sortTable("invTable", 2, true);
+            });
+            $("#numeDescInv").on('click', function(event) {
+                event.preventDefault();
+                sortTable("invTable", 2, false);
+            });
+            $("#userAscInv").on('click', function(event) {
+                event.preventDefault();
+                sortTable("invTable", 3, true);
+            });
+            $("#userDescInv").on('click', function(event) {
+                event.preventDefault();
+                sortTable("invTable", 3, false);
+            });
+            function sortTable(tableId, columnIndex, ascending) {
+                var table, rows, switching, i, x, y, shouldSwitch;
+                table = document.getElementById(tableId);
+                switching = true;
+        
+                while (switching) {
+                    switching = false;
+                    rows = table.getElementsByTagName("tr");
+        
+                    for (i = 1; i < rows.length - 1; i++) {
+                        shouldSwitch = false;
+                        x = rows[i].getElementsByTagName("td")[columnIndex];
+                        y = rows[i + 1].getElementsByTagName("td")[columnIndex];
+        
+                        // Compare as text (case-insensitive)
+                        var comparison = x.innerHTML.toLowerCase().localeCompare(y.innerHTML.toLowerCase());
+        
+                        if (ascending) {
+                            shouldSwitch = comparison > 0;
+                        } else {
+                            shouldSwitch = comparison < 0;
+                        }
+        
+                        if (shouldSwitch) {
+                            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                            switching = true;
+                        }
+                    }
+                }
+            }
+            // Click event for the document to close dropdown when clicking outside
+            $(document).on('click', function(event) {
+                // Check if the clicked element is not inside #rolBtn or #rolDropDown
+                if (!$(event.target).closest("#rolBtn, #rolDropDown").length) {
+                    $("#rolDropDown").css('display', 'none');
+                }
+                if (!$(event.target).closest("#exportBtn, #exportDropDown").length) {
+                    $("#exportDropDown").css('display', 'none');
+                }
+                if (!$(event.target).closest("#exportBtnInv, #exportDropDownInv").length) {
+                    $("#exportDropDownInv").css('display', 'none');
+                }
+                if (!$(event.target).closest("#sortBtn, #sortDropDown").length) {
+                    $("#sortDropDown").css('display', 'none');
+                }
+                if (!$(event.target).closest("#sortBtnInv, #sortDropDownInv").length) {
+                    $("#sortDropDownInv").css('display', 'none');
+                }
+            });
+            //User Table
+            $("#createBtn").on('click', function() {
+                window.location = '{{url_for("import.add_user")}}';
+            });
+            //Inventar Table
+            $("#createBtnInv").on('click', function() {
+                window.location = '{{url_for("import.add_inventar")}}';
+            });
+            //User Table
+            $("#selectAll").on('change', function () {
+                var isChecked = $(this).prop('checked');
+                $(".selectAllCheckbox").prop('checked', isChecked);
+
+                if ($("#selectAll:checked").length == 1) {
+                    $("#delBtn").css('display', 'block');
+                } else {
+                    $("#delBtn").css('display', 'none');
+                }
+            });
+            //Inventar Table
+            $("#selectAllInv").on('change', function () {
+                var isChecked = $(this).prop('checked');
+                $(".selectAllCheckbox").prop('checked', isChecked);
+
+                if ($("#selectAllInv:checked").length == 1) {
+                    $("#delBtnInv").css('display', 'block');
+                    $("#downloadQR").css('display', 'flex');
+                } else {
+                    $("#delBtnInv").css('display', 'none');
+                    $("#downloadQR").css('display', 'none');
+                }
+            });
+            $(".selectAllCheckbox").on('change', function() {
+                if ($(".selectAllCheckbox:checked").length >= 2) {
+                    $("#delBtn").css('display', 'block');
+                    $("#delBtnInv").css('display', 'block');
+                    $("#downloadQR").css('display', 'flex');
+                } else {
+                    $("#delBtn").css('display', 'none');
+                    $("#delBtnInv").css('display', 'none');
+                    $("#downloadQR").css('display', 'none');
+                }
+            });
+            //User Table
+            $("#allUsers .selectable").on('click', function (event) {
+                event.stopPropagation();
+
+                $("#allUsers .selectable").css('background-color', '');
+
+                $(this).css('background-color', '#EFF7FC');
+                // Find the user ID associated with the clicked row
+                var userId = $(this).data('user-id');
+
+                fetchUserData(userId);
+            });
+            //Inventar Table
+            $("#inventory").on('click', ' .selectable', function (event) {
+                event.stopPropagation();
+
+                $(".selectable").css('background-color', '');
+
+                $(this).css('background-color', '#EFF7FC');
+                // Find the user ID associated with the clicked row
+                var invId = $(this).data('inv-id');
+
+                fetchInvData(invId);
+            });
+            //User Table
+            var editBtn = $(".editBtn");
+
+            editBtn.on('click', function () {
+                var userId = $(this).data('user-id');
+                window.location.href = "{{ url_for('import.change', user_id = '') }}" + userId;
+            });
+            //Inventar Table
+            var editBtnInv = $("#editInvBtn");
+
+            editBtnInv.on('click', function() {
+                var uniqueid = $(this).data('inv-id');
+                window.location.href = "{{ url_for('import.change_inventar', unique_id = '') }}" + uniqueid;
+            });
+            //User Table
+            var deleteBtn = $(".deleteBtn");
+
+            deleteBtn.on('click', function () {
+                var userId = $(this).data('user-id');
+                $("#confirmationModal").modal("show");
+                $("#confirmationModal").attr('data-user-id', userId);
+            });
+            //Inventar Table
+            var deleteInvBtn = $('#deleteInvBtn');
+
+            deleteInvBtn.on('click', function(event) {
+                event.preventDefault();
+                var invId = $(this).data('inv-id');
+                $("#confirmationModal").modal("show");
+                $("#confirmActionBtn").attr('data-inv-id', invId);
+                console.log(invId);
+            });
+
+            $("#confirmActionBtn").on('click', function (event) {
+                event.preventDefault();
+                var userId = $(this).data('user-id');
+                var invId = $(this).data('inv-id');
+                if (currentURL.includes('allUsers') || currentURL.includes('students') || currentURL.includes('staff')) {
+                    window.location.href = "{{url_for('import.delete', user_id='')}}" + userId;
+                } else if (currentURL.includes('inventory')) {
+                    console.log(invId);
+                    window.location.href = "{{url_for('import.delete_inventar', unique_id='')}}" + invId;
+                }
+                
+            });
+
+            $("#allBtn").on("click", function(event) {
+                event.preventDefault();
+                $("tbody tr").show();
+
+                $("#rolDropDown").css('display', 'none');
+                $("#rolBtn .btnText").html('Rol');
+                $("#resultNum").html($("tbody tr:visible").length);
+            });
+
+            $("#elevBtn").on("click", function(event) {
+                event.preventDefault();
+                $("tbody tr").show();
+                $("tbody tr:not([data-role='Elev'])").hide();
+
+                $("#rolDropDown").css('display', 'none');
+                $("#rolBtn .btnText").html('Elev');
+                $("#resultNum").html($("tbody tr:visible").length);
+            });
+            
+            $("#directorBtn").on("click", function(event) {
+                event.preventDefault();
+                $("tbody tr").show();
+                $("tbody tr:not([data-role='Director'])").hide();
+
+                $("#rolDropDown").css('display', 'none');
+                $("#rolBtn .btnText").html('Director');
+                $("#resultNum").html($("tbody tr:visible").length);
+            });
+            
+            $("#profesorBtn").on("click", function(event) {
+                event.preventDefault();
+                $("tbody tr").show();
+                $("tbody tr:not([data-role='Profesor'])").hide();
+
+                $("#rolDropDown").css('display', 'none');
+                $("#rolBtn .btnText").html('Profesor');
+                $("#resultNum").html($("tbody tr:visible").length);
+            });
+            
+            $("#tehnicBtn").on("click", function(event) {
+                event.preventDefault();
+                $("tbody tr").show();
+                $("tbody tr:not([data-role='Tehnic'])").hide();
+
+                $("#rolDropDown").css('display', 'none');
+                $("#rolBtn .btnText").html('Tehnic');
+                $("#resultNum").html($("tbody tr:visible").length);
+            });
+            //User Table
+            $("#userSearch").on('input', function() {
+                var searchKey = $(this).val();
+                // Show all rows initially
+                $("#allUsers tbody tr").show();
+
+                $("#allUsers tbody tr").filter(function(){
+                    return !($(this).text().toLowerCase().includes(searchKey.toLowerCase()));
+                }).hide();
+            });
+            //Inventory Table
+            $("#userSearchInv").on('input', function() {
+                var searchKey = $(this).val();
+                // Show all rows initially
+                $("#inventory tbody tr").show();
+
+                $("#inventory tbody tr").filter(function(){
+                    return !($(this).text().toLowerCase().includes(searchKey.toLowerCase()));
+                }).hide();
+            });
+
+            $("#printBtn, #printBtnInv").on('click', function() {
+                optionsTable('print');
+            });
+            $('#pdfBtn, #pdfBtnInv').on('click', function(event) {
+                event.preventDefault();
+                optionsTable('pdf');
+            });
+            $('#docxBtn, #docxBtnInv').on('click', function() {
+                optionsTable('docx');
+            });
+            $('#csvBtn, #csvBtnInv').on('click', function() {
+                optionsTable('csv');
+            });
+            $('#xlsxBtn, #xlsxBtnInv').on('click', function() {
+                optionsTable('xlsx');
+            });
+            //Inventar Table
+            $("#downloadQR").on('click', function() {
+                var selectedInvIds = [];
+                $(".selectAllCheckbox:checked").each(function() {
+                    var invId = $(this).closest("tr").data('inv-id');
+                    selectedInvIds.push(invId);
+                });
+            
+                // Build the URL with parameters
+                var url = "{{url_for('import.downloadQR')}}";
+                if (selectedInvIds.length > 0) {
+                    url += "?inv_ids=" + selectedInvIds.join("&inv_ids=");
+                }
+            
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    success: function(response) {
+                        // Assuming the response contains the file path
+                        var file_path = response.response;
+
+                        // Check if file_path is defined and not null
+                        if (file_path) {
+                            // Replace backslashes with forward slashes
+                            file_path = file_path.replace(/\\/g, '/');
+
+                            // Create a hidden link and trigger a click to start the download
+                            var downloadLink = document.createElement('a');
+                            downloadLink.href = file_path;
+
+                            // Extract the filename from the file path (optional)
+                            var filename = file_path.split('/').pop();
+                            downloadLink.download = filename;
+
+                            document.body.appendChild(downloadLink);
+                            downloadLink.click();
+                            document.body.removeChild(downloadLink);
+                        } else {
+                            console.error('File path is undefined or null');
+                        }
+                    },
+                    error: function(error) {
+                        console.error('Error: ', error);
+                    }
+                });
+            });
+            //User Table
+            $("#delBtn").on('click', function() {
+                var selectedUserIds = [];
+                $(".selectAllCheckbox:checked").each(function() {
+                    var userId = $(this).closest("tr").data('user-id');
+                    selectedUserIds.push(userId);
+                });
+                $("#confirmationModal").modal('show');
+                $("#confirmActionBtn").off('click').on('click', function(event) {
+                    event.preventDefault();
+                    $.ajax({
+                        url: '{{url_for("import.deleteMultiple")}}',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({user_ids: selectedUserIds, url_type: 'users'}),
+                        success: function() {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Modificari aduse cu success",
+                                text: "Please refresh the page to see the changes.",
+                                confirmButtonText: 'OK',
+                            }).then(function() {
+                                location.reload();
+                            });
+                        },
+                        error: function(error){
+                            console.error('Error: ', error);
+                        }
+                    });
+                });
+            });
+            //Inventar Table
+            $("#delBtnInv").on('click', function() {
+                var selectedInvIds = [];
+                $(".selectAllCheckbox:checked").each(function() {
+                    var invId = $(this).closest("tr").data('inv-id');
+                    selectedInvIds.push(invId)
+                });
+                $("#confirmationModal").modal('show');
+                $("#confirmActionBtn").off('click').on('click', function(event) {
+                    event.preventDefault();
+                    $.ajax({
+                        url: '{{url_for("import.deleteMultiple")}}',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({inv_ids: selectedInvIds, url_type: 'inventar'}),
+                        success: function() {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Modificari aduse cu success",
+                                text: "Please refresh the page to see the changes.",
+                                confirmButtonText: 'OK',
+                            }).then(function() {
+                                location.reload();
+                            });
+                        },
+                        error: function(error){
+                            console.error('Error: ', error);
+                        }
+                    });
+                });
+            });
+            $("#downloadQRBtn").on('click', function(){
+                window.location.href = "{{url_for('import.downloadQrDirectory')}}";
+            });
+        });
+        function optionsTable(type){
+            if(currentURL.includes('allUsers') || currentURL.includes('students') || currentURL.includes('staff')){
+                var selectedUserIds = [];
+                $("#allUsers tbody tr:visible").each(function(){
+                    var userId = $(this).closest('tr').data('user-id');
+                    selectedUserIds.push(userId);
+                });
+                $.ajax({
+                    url: '{{url_for("create.createFile")}}',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({userIds: selectedUserIds, pageType: type}),
+                    success: function(data){
+                        var filePath = data.file;
+                        window.location.href = filePath;
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error(textStatus, errorThrown);
+                    }
+                });
+            } else if(currentURL.includes('inventory')) {
+                var selectedInvIds = [];
+                $("#inventory tbody tr:visible").each(function(){
+                    var invId = $(this).closest('tr').data('inv-id');
+                    selectedInvIds.push(invId);
+                });
+                $.ajax({
+                    url: '{{url_for("create.createFile")}}',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({invIds: selectedInvIds, pageType: type}),
+                    success: function(data){
+                        var filePath = data.file;
+                        window.location.href = filePath;
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error(textStatus, errorThrown);
+                    }
+                });
+            }
+            
+        }
+        function fetchUserData(userId){
+            $.ajax({
+                url: "{{url_for('views.getUserData', userId='')}}" + userId,
+                method: 'GET',
+                success: function(data){
+                    if (data.role == 'Elev') {
+                        $("#studentDetails").show();
+                        $("#otherDetails").hide();
+                        $("#events").hide();
+
+                        //Form Details
+                        $("#studentDetails .userID").text(data.id);
+                        $("#studentDetails .userNume").text(data.name);
+                        $("#studentDetails .userSndName").text(data.sndName);
+                        $("#studentDetails .userClass").text(data.class);
+                        $("#studentDetails .userEmail").text(data.email);
+                        $("#studentDetails .userPhone").text(data.phone);
+                        $("#studentDetails .userAddress").text(data.address);
+                        $("#studentDetails .userCreate").text(data.create);
+                        $("#studentDetails a").attr('href', "{{url_for('import.reset_password', user_id = '')}}" + data.id);
+                        $("#studentDetails #editBtn").attr('data-user-id', data.id);
+                        $("#studentDetails #deleteBtn").attr('data-user-id', data.id);
+                    } else {
+                        $("#otherDetails").show();
+                        $("#studentDetails").hide();
+                        $("#events").hide();
+
+                        //Form Details
+                        $("#otherDetails .userID").text(data.id);
+                        $("#otherDetails .userNume").text(data.name);
+                        $("#otherDetails .userSndName").text(data.sndName);
+                        $("#otherDetails .userRole").text(data.role);
+                        $("#otherDetails .userCalif").text(data.calif);
+                        $("#otherDetails .userEmail").text(data.email);
+                        $("#otherDetails .userPhone").text(data.phone);
+                        $("#otherDetails .userAddress").text(data.address);
+                        $("#otherDetails .userCreate").text(data.create);
+                        $("#otherDetails a").attr('href', "{{url_for('import.reset_password', user_id = '')}}" + data.id);
+                        $("#otherDetails #editBtn").attr('data-user-id', data.id);
+                        $("#otherDetails #deleteBtn").attr('data-user-id', data.id);
+                    }
+                },
+                error: function(error){
+                    console.error('Error: ', error);
+                }
+            });
+        }
+        function fetchInvData(invId){
+            $.ajax({
+                url: "{{url_for('results.getInvData', invId='')}}" + invId,
+                method: 'GET',
+                success: function (data) {
+                    $("#studentDetails").hide();
+                    $("#otherDetails").hide();
+                    $("#events").hide();
+                    $("#inventar").show();
+
+                    //Form Details
+                    $("#inventar .invID").text(data.id);
+                    $("#inventar .invNume").text(data.name);
+                    $("#inventar .detinatorName").text(data.user);
+                    $("#inventar .invCant").text(data.cant);
+                    $("#inventar .invPrice").text(data.price + ' RON');
+                    $("#inventar .invtotal").text(data.total + ' RON');
+                    $("#inventar #editInvBtn").attr('data-inv-id', data.id);
+                    $("#inventar #deleteInvBtn").attr('data-inv-id', data.id);
+                    $("#downloadQRLink")
+                        .attr('href', 'static/images/qrcodes/' + data.id + '.png')
+                        .attr('download', 'inventar.png');
+                },
+                error: function(error){
+                    console.error('Error: ', error);
+                }
+            });
+        }
+    </script>
+    <!-- Modal for Confirmation -->
+    <div class="modal fade confirmationModal" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Placeholder for dynamic content -->
+                <div id="confirmationModalContent">Are you sure you want to delete this item?</div>
+            </div>
+            <div class="modal-footer">
+                <!-- Confirmation button with a dynamic action -->
+                <button type="button" class="btn btn-danger" id="confirmActionBtn">Confirm</button>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="links">
+  <a href="{{url_for('views.confirmEmail')}}">Resetare parola</a>
+  <a href="{{url_for('views.reset_user')}}">Resetare username</a>
+  <a href="{{url_for('chat.chat')}}">WebChat</a>
+  <a href="{{url_for('qread.qrscanner')}}">Scanare QRCode</a>
+  <a href="{{url_for('import.add_files')}}">Adaugare Fisier</a>
+  <a href="{{url_for('import.add_inventar')}}">Adaugare Inventar</a>
+  <a href="{{url_for('import.downloadQrDirectory')}}" download>Descarca Codurile QR</a>
+  <a href="{{url_for('views.calendarGenerator')}}">Calendar</a>
+  <a href="{{url_for('import.inventarTransfer')}}">Transfer Inventar</a>
+  <a href="{{url_for('news.requests')}}">Actualizări</a>
+</div>
+
+<!-- Cloudflare Pages Analytics -->
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js'
+  data-cf-beacon='{"token": "dc4641f860664c6e824b093274f50291"}'></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var calendarElem = document.getElementById('calendar-front');
+    var calendar = new FullCalendar.Calendar(calendarElem, {
+      timeZone: 'Europe/Romania',
+      headerToolbar: {
+        left: 'prev',
+        center: 'title',
+        right: 'next'
+      },
+      dateClick: function (info) {
+        var clickedDate = info.date.toISOString();
+        window.location.href = '/calendar?date=' + clickedDate + '&view=timeGridDay';
+      },
+      initialView: 'timeGridDay',
+      selectable: true,
+      navLinks: true,
+      firstDay: 1,
+      locale: 'ro',
+      height: 400,
+      aspectRatio: 3,
+      events: [
+        {% for event in events %}
+        {
+            id: '{{event.id}}',
+            title: '{{event.title}}',
+            start: '{{event.start}}',
+            end: '{{event.end}}',
+        },
+        {% endfor %}
+        ],
+    });
+    calendar.render();
+  });
+</script>
+<div class="calendar-container">
+  <div id="calendar-front" class="calendar-front"></div>
+</div>
+<script src='{{url_for("static", filename="fullcalendar/dist/index.global.js")}}'></script>
+{% endblock %}

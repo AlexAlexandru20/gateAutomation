@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error Page</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='error.css')}}">
+</head>
+<body>
+    <div class="element">
+        <div class="text-wrapper">Oops!</div>
+        <div class="error_content">{{page_type}}</div>
+        <img class="frame" src="{{url_for('static', filename='images/svg_website/404.png')}}" alt="404 Error"/>
+        <button class="button" id="button" onclick="redirectUser()">
+          <div class="go-home">Go Home</div>
+          <img class="arrow" src="{{url_for('static', filename='images/svg_website/back-arrow.svg')}}" alt="Back Arrow" />
+        </button>
+        <img class="img" src="{{url_for('static', filename='images/svg_website/eyes.png')}}" alt="Eyes Picture"/>
+      </div>
+
+
+      <script>
+        function getUserRole() {
+          return "{{ current_user.rol }}";
+        }
+    
+        function getUserCalificare() {
+          return "{{ current_user.calificare}}";
+        }
+    
+        function redirectHomePage() {
+          var user_role = getUserRole();
+          var user_calif = getUserCalificare();
+    
+          var homePageURL;
+          switch (user_role) {
+            case "admin":
+              homePageURL = "{{url_for('views.admin')}}";
+              break;
+            case "profesor":
+              homePageURL = '{{url_for("views.teacher")}}';
+              break;
+            case "elev":
+              homePageURL = '{{url_for("views.student")}}';
+              break;
+            case "tehnic":
+              if (user_calif == "informatician") {
+                homePageURL = '{{url_for("views.admin")}}';
+              } else {
+                <!--TODO change to 'views.tehnic after create the route'-->
+                homePageURL = "/tehnic";
+              }
+              break;
+            default:
+              homePageURL = "/";
+              break;
+          }
+          window.location.href = homePageURL;
+        }
+    
+        var redirectLink = document.getElementById("button");
+        redirectLink.addEventListener("click", function () {
+          event.preventDefault();
+          redirectHomePage();
+        });
+      </script>
+</body>
+</html>
+
+  

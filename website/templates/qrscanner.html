@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}
+    QR Scanner
+{% endblock %}
+{% block content %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"></script>
+    <script>
+        var socket = io.connect('http://' + document.domain + ':' + location.port + '/qrscanner');
+
+        // Handle the 'qr_detected' event
+        socket.on('qr_detected', function(data) {
+            // Redirect to the specified URL using url_for
+            var redirectUrl = '{{ url_for("results.result") }}?query=' + encodeURIComponent(data.query);
+            window.location.href = redirectUrl;
+        });
+
+        // Handle page unload or URL change
+        window.addEventListener('beforeunload', function() {
+            socket.emit('close_page', {message: 'Closing the page'});
+        });
+
+    </script>
+
+    <!-- Display the live video feed -->
+    <div class="video-tab">
+        <img src="{{url_for('qread.videoStreaming')}}" width="640" height="480" alt="VideoStreaming">
+    </div>
+{% endblock %}

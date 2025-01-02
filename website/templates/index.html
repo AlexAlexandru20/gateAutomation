@@ -1,1 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inregistrare Scoala</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='hero.css')}}">
+</head>
+<body class="imgBack">
+    <div class="content">
+        <div class="logo">SchoolSYS</div>
+        <legend>Formular Înregistrare</legend>
+        <div class="existentUser">
+            Ai deja cont? <a href="{{url_for('auth.login')}}">Login</a>
+        </div>
+        <form method="POST" action="{{ url_for('import.schoolForm') }}">
+            
+            <div class="row">
+                <input type="text" placeholder="Numele Scolii" name="school_name" id="school_name" required />
+                <input type="text" placeholder="Prescurtare" name="school_short" id="school_short" required>
+            </div>
+            <div class="row">
+                <input type="email" placeholder="Email" name="school_email" id="school_email" required />
+                <input type="tel" placeholder="Telefon" name="school_phone" id="school_phone" required />
+                
+            </div>
+            <input type="text" placeholder="Adresa" name="school_address" id="school_address" required />
+            <div class="btn">
+                <button type="submit" id="registerBtn">
+                    <img src="{{url_for('static', filename='images/svg_website/register.svg')}}">Înregistrare
+                </button>
+            </div>
+            
+        </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://unpkg.com/gsap@3.9.0/dist/gsap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var myButton = document.getElementById('registerBtn');
 
+            myButton.addEventListener('mouseenter', function() {
+                gsap.to(myButton, { background: 'linear-gradient(to right, rgb(246, 173, 43), rgb(246, 173, 43), rgb(246, 173, 43))', duration: 0.4 });
+            });
+
+            myButton.addEventListener('mouseleave', function() {
+                gsap.to(myButton, { background: 'linear-gradient(to right, rgba(137, 189, 228, .6), rgb(246, 173, 43), rgba(127, 189, 228, .82))', duration: 0.4 });
+            });
+            myButton.addEventListener('click', function(event) {
+                event.preventDefault();
+                var name = document.getElementById('school_name');
+                var short = document.getElementById('school_short');
+                var email = document.getElementById('school_email');
+                var phone = document.getElementById('school_phone')
+                var address = document.getElementById('school_address');
+
+                $.ajax({
+                    url: '{{url_for("import.schoolForm")}}',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({name: name.value, short: short.value, email: email.value, phone: phone.value, address: address.value}),
+                    success: function(message){
+                        if(message.message === 'success') {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Școală înregistrată cu success",
+                                text: "Veți primi un email cu detaliile. \nVă mulțumim!",
+                                confirmButtonText: 'OK',
+                            }).then(function() {
+                                location.reload();
+                            });
+                        } else if (message.message === 'existent') {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Școală înregistrată deja",
+                                text: "A fost trimis un email cu detaliile. \nVă mulțumim!",
+                                confirmButtonText: 'OK',
+                            }).then(function() {
+                                location.reload();
+                            });
+                        }
+                    },
+                    error: function(error){
+                        console.error('Error: ', error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

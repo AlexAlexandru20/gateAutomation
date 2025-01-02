@@ -1,0 +1,150 @@
+{% extends 'base.html' %} {% block title %} Result page {% endblock %} 
+{% block content %}
+<style>
+  .clear-icon {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    display: none;
+  }
+</style>
+<script>
+  $(document).ready(function(){
+    qrscanner();
+
+    // Variable to keep track of the current table
+    let currentTable = null;
+
+    function updateResults(result_data, html_response) {
+        const searchResults = $('#searchResults');
+        searchResults.empty();
+
+        let hasResults = false;
+
+        if (result_data) {
+            for (const key in result_data) {
+                if (result_data[key].count > 0) {
+                    let resultItem = $(`<li class='list-group-item' data-table="${key}"><b>${result_data[key].title}:</b> ${result_data[key].count} rezultate</li>`);
+                    searchResults.append(resultItem);
+                    hasResults = true;
+
+                    resultItem.on('click', function() {
+                      // Retrieve the table name from the data attribute
+                      let clickedTable = $(this).data('table');
+                  
+                      // Update the HTML content with the received html_response for the specific table
+                      $('#result').html(html_response[clickedTable]);
+                      searchResults.empty();
+                  });
+                }
+            }
+        }
+
+        if (!hasResults) {
+            let resultItem = `<li class='noHover'> Nu exista rezultate </li>`;
+            searchResults.append(resultItem);
+        }
+    }
+
+    $('#floatingInputGroup1').on("input", function(){
+        var search = $(this).val();
+        load_data(search);
+    });
+
+    function load_data(query){
+        $.ajax({
+            url: "/searchAJAXDirects",
+            method: 'POST',
+            data: {query: query},
+            success: function(data){
+                updateResults(data.result_data, data.html_response);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error(textStatus, errorThrown);
+            }
+        });
+    }
+    
+    function qrscanner(){
+          //take value of input
+          let search = $('#floatingInputGroup1').val().trim();
+          //load_data function
+          load_data(search);
+          //delete session from storage
+          sessionStorage.removeItem('previousPage');
+    }
+  });
+</script>
+
+<div class="content-search">
+  <form method="POST" class="search-form">
+    <div class="mb-3 input-group position-relative">
+      <span class="input-group-text"
+        ><img
+          src="{{url_for('static', filename='images/svg_website/search.svg')}}"
+          alt="Search Icon"
+          class="search-icon"
+      /></span>
+      <div class="form-floating">
+        <input
+          type="text"
+          class="form-control"
+          id="floatingInputGroup1"
+          name="search"
+          value="{{ query }}"
+          placeholder="Cu ce te pot ajuta astazi?"
+        />
+        <label for="floatingInputGroup1">Cu ce te pot ajuta astazi?</label>
+        <div class="clear-icon" onclick="clearInput(this)">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-x-lg"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"
+            />
+          </svg>
+        </div>
+      </div>
+      <span class="input-group-text" id="redirect-link"
+        ><img
+          src="{{url_for('static', filename='images/svg_website/scan.svg')}}"
+          alt="Search Icon"
+          class="scan-icon"
+      /></span>
+    </div>
+    <ul id="searchResults" class="list-group list-group-flush"> </ul>
+</form>
+</div>
+  <script>
+    function handleInput(input) {
+      var clearIcon = input.parentElement.querySelector(".clear-icon");
+      if (input.value.trim() !== "") {
+        clearIcon.style.display = "block";
+      } else {
+        clearIcon.style.display = "none";
+      }
+    }
+
+    function clearInput(input) {
+      var inputField = input.parentElement.querySelector("input");
+      inputField.value = "";
+      input.style.display = "none";
+    }
+  </script>
+  <script>
+    var spanClick = document.getElementById("redirect-link");
+    spanClick.addEventListener("click", function () {
+      window.location.href = '{{url_for("qread.qrscanner")}}';
+    });
+  </script>
+  <div class="result" id="result"></div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='hero.css')}}">
+    <script src="{{url_for('static', filename='base.js')}}"></script>
+</head>
+<body>
+    <div class="form">   
+        <form method = 'POST' action="{{url_for('auth.login')}}">
+            <div class="logo">SchoolSYS</div>
+            <legend>Log In</legend>
+            <div class="usernameArea">
+                <input type="text" id="username" name="username" placeholder="Username *" value="{{ username }}" required autocomplete="username">
+            </div>
+            <div class="passowordArea">
+                <input type="password" placeholder="Parolă *" id="password" name="password" required autocomplete="current-password">
+            </div>
+            <div class="mb-3 form-check">  
+                <input type="checkbox" id="exampleCheck" onchange="showPassword()">
+                <label for="exampleCheck">Check me out</label>
+            </div>
+            <div class="registerLink">
+                Nu ai cont? <a href="{{url_for('auth.hero')}}">Crează-ți unul</a>
+            </div>
+            <button type="submit" id="loginBtn">Login</button>
+        </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#loginBtn").on('click', function(event) {
+                event.preventDefault();
+
+                username = $("#username").val();
+                password = $("#password").val();
+
+                $.ajax({
+                    url: '{{url_for("auth.login")}}',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({username: username, password: password}),
+                    success: function(data){
+                        if (data.message === 'wrong') {
+                            Swal.fire({
+                                icon: "error",
+                                title: "User inexistent",
+                                text: "Parola sau username greșit",
+                                confirmButtonText: 'OK',
+                            }).then(function() {
+                                location.reload();
+                            });
+                        } else {
+                            redirectHomePage(data.userRole, data.userCalif);
+                        }
+                    },
+                    error: function(message){
+                        console.error('Error', message)
+                    }
+                });
+            });
+        });
+          function redirectHomePage(role, calif) {
+      
+            var homePageURL;
+            switch (role) {
+              case "admin":
+                homePageURL = "{{url_for('views.admin')}}";
+                break;
+              case "director":
+                homePageURL = "{{url_for('views.director')}}";
+                break;
+              case "profesor":
+                homePageURL = '{{url_for("views.teacher")}}';
+                break;
+              case "elev":
+                homePageURL = '{{url_for("views.student")}}';
+                break;
+              case "tehnic":
+                if (calif == "informatician") {
+                  homePageURL = '{{url_for("views.admin")}}';
+                } else {
+                  <!--TODO change to 'views.tehnic after create the route'-->
+                  homePageURL = "/tehnic";
+                }
+                break;
+              default:
+                homePageURL = "/";
+                break;
+            }
+            window.location.href = homePageURL;
+          }
+    </script>
+</body>
+</html>
