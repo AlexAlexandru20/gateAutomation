@@ -14,5 +14,5 @@ numpy
 pyzbar
 flask-socketio
 flask-cors
-Pillow'
+Pillow
 
