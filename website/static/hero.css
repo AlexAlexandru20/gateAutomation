@@ -1,0 +1,195 @@
+:root{
+    --font: 'Inter';
+}
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+.imgBack{
+    background-image: url('images/svg_website/heroImg.png');
+    background-size: auto;
+    background-repeat: no-repeat;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+/*hero page */
+.content{
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: center;
+    width: 40vw;
+    position: absolute;
+    height: 100vh;
+    top: 0;
+    right: 0;
+}
+.content .logo{
+    width: 100%;
+    display: flex;
+    justify-content: left;
+    padding: 2dvh 0;
+    font-size: 26px;
+    font-weight: bold;
+}
+.content legend{
+    font-family: 'Arial';
+    font-size: 32px;
+    color: rgba(35, 50, 85, .75);
+    font-weight: bold;
+    padding: 1dvh 0;
+}
+.existentUser{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    padding: .5dvh 1dvw;
+    font-size: 14px;
+}
+.existentUser a{
+    color: #F6AD2B;
+    padding: 0 5px;
+    text-decoration: none;
+}
+.existentUser a:hover{
+    text-decoration: underline;
+}
+.content form{
+    margin: 3dvh 0;
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+}
+.content .row{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.content input{
+    border: 1px solid rgba(35, 50, 85, .35);
+    border-radius: 5px;
+    background-color: rgba(355, 355, 355, .35);
+}
+.row input{
+    padding: 1dvh 3dvw 1dvh .5dvw;
+    margin: 1.5dvh 0;
+}
+#school_address{
+    padding: 1dvh .5dvw;
+    margin: 1.5dvh 0;
+}
+.content .btn{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10dvh;
+}
+.content button{
+    all: unset;
+    padding: 1dvh 2dvw;
+    border-radius: 25px;
+    color: #4E4B4B;
+    font-size: 16px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    background: linear-gradient(to right, rgba(137, 189, 228, .6), rgb(246, 173, 43), rgba(127, 189, 228, .82));
+}
+.content img{
+    margin-right: 10px;
+}
+.content button:hover {
+    cursor: pointer;
+}
+
+/*login page */
+.form{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #ededed;
+}
+.form form{
+    margin-top: 15dvh;
+    background-color: #fff;
+    border-radius: 5px;
+    border: 1px solid #e2e2e2;
+    width: 22%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+.form .logo{
+    display: flex;
+    width: 100%;
+    font-weight: bold;
+    padding: 1dvh 1dvw;
+    font-family: var(--font);
+    font-size: 20px;
+}
+.form legend{
+    font-family: var(--font);
+    font-size: 20px;
+    font-weight: bold;
+    padding: 2dvh 0;
+    color: #555;
+    margin-bottom: 2dvh;
+}
+.form input[type='text'],
+.form input[type='password']{
+    width: 100%;
+    padding: 1dvh 5dvw 1dvh 1dvw;
+    border-radius: 5px;
+    border: 1px solid #b9b9b9;
+    margin: 1dvh 0;
+}
+.form input::placeholder{
+    color: #555;
+    font-family: var(--font);
+    font-size: 14px;
+}
+.form .form-check{
+    margin: 1dvh 0 2dvh -10dvw;
+}
+.form .registerLink{
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: right;
+    padding-right: 2.5dvw;
+    font-size: 14px;
+    font-family: var(--font);
+}
+.registerLink a{
+    padding: 0 5px;
+    color: #F6AD2B;
+    text-decoration: none;
+}
+.registerLink a:hover{
+    text-decoration: underline;
+}
+.form button{
+    all: unset;
+    background-color: #277caf;
+    padding: 1dvh 6dvw;
+    color: #fff;
+    border-radius: 5px;
+    margin: 2dvh 0 5dvh;
+    border: 1px solid #277caf;
+    transition: background-color .2s ease-in-out, border .2s ease-in-out;
+}
+.form button:hover,
+.form button:focus{
+    cursor: pointer;
+    background-color: #43a8e7;
+    border: 1px solid #43a8e7;
+}
