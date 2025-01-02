@@ -7,10 +7,9 @@ from flask_sse import sse
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from os import path
+from babel.dates import format_date, format_time, format_datetime
 from datetime import datetime
-import os, locale
-
-locale.setlocale(locale.LC_TIME, 'fr_FR')
+import os
 
 #init DB
 db = SQLAlchemy()
@@ -119,30 +118,19 @@ def create_database(app):
         print('Database created')
 
 
-#Format DateTime
-def format_datetime(datetime_str):
-    day_names = ['Luni', 'Marți', 'Miercuri', 'Joi', 'Vineri', 'Sâmbătă', 'Duminică']
-
+def format_datetime_babel(datetime_str, locale='ro'):
     dt_object = datetime.strptime(datetime_str, "%Y-%m-%dT%H:%M:%S") if "T" in datetime_str else datetime.strptime(datetime_str, "%Y-%m-%d")
 
-    month_text = dt_object.strftime("%B").capitalize()
-
-    time_formatted = dt_object.strftime("%H:%M") if "T" in datetime_str else None
-
-    month_full = f"{dt_object.strftime('%d')} {month_text}"
-
-    day_of_week = dt_object.weekday()
+    month_full = format_date(dt_object, format='d MMMM', locale=locale)
+    week_day = format_date(dt_object, format='EEEE', locale=locale)
+    time_formatted = format_time(dt_object, format='HH:mm', locale=locale) if "T" in datetime_str else None
 
     result = {
         'month': month_full,
-        'weekDay': day_names[day_of_week]
+        'weekDay': week_day
     }
 
     if time_formatted:
-        result = {
-            'month': month_full,
-            'time': time_formatted,
-            'weekDay': day_names[day_of_week]
-        }
+        result['time'] = time_formatted
 
     return result
