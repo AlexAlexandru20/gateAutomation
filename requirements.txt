@@ -16,3 +16,5 @@ flask-socketio
 flask-cors
 Pillow
 Babel
+libgl1-mesa-glx
+libglib2.0-0
