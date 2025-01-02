@@ -15,4 +15,4 @@ pyzbar
 flask-socketio
 flask-cors
 Pillow
-
+Babel
