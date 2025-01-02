@@ -1,1 +1,18 @@
+pytz
+fpdf2
+validate-email-address
+flask
+flask-login
+flask-mail
+flask-oauthlib
+flask-sqlalchemy
+Flask-SSE
+qrcode
+pandas
+opencv-python
+numpy
+pyzbar
+flask-socketio
+flask-cors
+Pillow'
 
